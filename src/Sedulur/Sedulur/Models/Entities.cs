@@ -1,4 +1,5 @@
-﻿using Sedulur.Data;
+﻿using GemBox.Document;
+using Sedulur.Data;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
@@ -74,6 +75,24 @@ namespace Sedulur.Models
         public DateTime CreatedDate { set; get; }
     }
 
+    [Table("postcomment")]
+    public class PostComment
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, Column(Order = 0)]
+        public long Id { get; set; }
+        public string Comment { set; get; }
+        public Post Post { set; get; }
+        [ForeignKey("Post")]
+        public long PostId { set; get; }
+        [ForeignKey("UserProfile")]
+        public long CommentByUserId { set; get; }
+        public string CommentByUsername { set; get; }
+        public DateTime CreatedDate { set; get; }
+        public UserProfile User { set; get; }
+
+    }
+
 
     [Table("contact")]
     public class Contact
@@ -112,6 +131,7 @@ namespace Sedulur.Models
         public ICollection<Repost> Reposts { get; set; }
 
         public ICollection<PostLike> PostLikes { get; set; }
+        public ICollection<PostComment> PostComments { get; set; }
     }
 
     public enum LogCategory
@@ -158,6 +178,7 @@ namespace Sedulur.Models
         public ICollection<Follow> FollowedBy { get; set; }
         public ICollection<Repost> Reposts { get; set; }
         public ICollection<PostLike> PostLikes { get; set; }
+        public ICollection<PostComment> PostComments { get; set; }
 
     }
 

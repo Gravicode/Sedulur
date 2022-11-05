@@ -28,6 +28,7 @@ namespace Sedulur.Data
         public DbSet<Follow> Follows { get; set; }
         public DbSet<PostLike> PostLikes { get; set; }
         public DbSet<Contact> Contacts { get; set; }
+        public DbSet<PostComment> PostComments { get; set; }
        
       
 

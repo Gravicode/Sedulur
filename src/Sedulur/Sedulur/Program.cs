@@ -39,6 +39,13 @@ builder.Services.AddScoped<HttpContextAccessor>();
 builder.Services.AddHttpClient();
 builder.Services.AddScoped<HttpClient>();
 builder.Services.AddTransient<AzureBlobHelper>();
+builder.Services.AddTransient<PostCommentService>();
+builder.Services.AddTransient<PostService>();
+builder.Services.AddTransient<PostLikeService>();
+builder.Services.AddTransient<RepostService>();
+builder.Services.AddTransient<FollowService>();
+builder.Services.AddTransient<TrendingService>();
+builder.Services.AddTransient<LogService>();
 
 builder.Services.AddTransient<UserProfileService>();
 
