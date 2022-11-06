@@ -897,7 +897,12 @@
                     </li>
                 </ul>
             </div>
-            <a href="#" class="btn btn-primary w-100 text-decoration-none rounded-4 py-3 fw-bold text-uppercase m-0" data-bs-toggle="modal" data-bs-target="#signModal">Sign In +</a>
+            <AuthorizeView>
+                <NotAuthorized>
+                    <a href="#" class="btn btn-primary w-100 text-decoration-none rounded-4 py-3 fw-bold text-uppercase m-0" data-bs-toggle="modal" data-bs-target="#signModal">Sign In +</a>
+                </NotAuthorized>
+            </AuthorizeView>
+
         </div>
         <!-- Sidebar -->
         <div class="ps-0 m-none fix-sidebar">
@@ -921,7 +926,7 @@
                         <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#languageModal"><span class="material-icons me-3">translate</span> <span>Language</span></a>
                     </li>
                     <li class="nav-item">
-                        <a href="index" class="nav-link"><span class="material-icons me-3">logout</span> <span>Logout</span></a>
+                        <a href="/logout" class="nav-link"><span class="material-icons me-3">logout</span> <span>Logout</span></a>
                     </li>
                     <li class="nav-item dropdown">
                         <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
@@ -939,7 +944,12 @@
                     </li>
                 </ul>
             </div>
-            <a href="#" class="btn btn-primary w-100 text-decoration-none rounded-4 py-3 fw-bold text-uppercase m-0" data-bs-toggle="modal" data-bs-target="#signModal">Sign In +</a>
+             <AuthorizeView>
+                <NotAuthorized>
+                  <a href="#" class="btn btn-primary w-100 text-decoration-none rounded-4 py-3 fw-bold text-uppercase m-0" data-bs-toggle="modal" data-bs-target="#signModal">Sign In +</a>
+                </NotAuthorized>
+            </AuthorizeView>
+           
         </div>
     </aside>
     <aside class="col col-xl-3 order-xl-3 col-lg-6 order-lg-3 col-md-6 col-sm-6 col-12">
@@ -1085,8 +1095,19 @@
     </aside>
 </div>
 
-@code{
+@code {
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
 
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (!user.Identity.IsAuthenticated)
+        {
+
+        }
+    }
     protected override void OnAfterRender(bool firstRender)
     {
 
@@ -1095,4 +1116,4 @@
             IJS.InvokeVoidAsync("InitJs");
         }
     }
-                                    }
+}

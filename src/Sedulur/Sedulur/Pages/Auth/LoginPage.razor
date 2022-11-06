@@ -1,0 +1,143 @@
+﻿@page "/auth/login"
+@page "/loginControl"
+@using System.Web;
+
+@using Microsoft.AspNetCore.WebUtilities
+@inject IJSRuntime jsRuntime
+@inject IToastService toastService
+@inject NavigationManager NavMgr
+<AuthorizeView>
+    <Authorized>
+        <b>Hello, @context.User.Identity.Name!</b>
+        <a class="ml-md-auto btn btn-primary"
+           href="/logout?returnUrl=/"
+           target="_top">Logout</a>
+    </Authorized>
+    <NotAuthorized>
+
+        <div class="modal fade" id="signModal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered">
+                <div class="modal-content rounded-4 p-4 border-0">
+                    <div class="modal-header border-0 p-1">
+                        <h6 class="modal-title fw-bold text-body fs-6" id="exampleModalLabel">Sign In</h6>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <form>
+                        <div class="modal-body p-0">
+
+                            <div class="mt-5 login-register" id="number">
+                                @*<h6 class="fw-bold mx-1 mb-2 text-dark">Register your Mobile Number</h6>*@
+                                <div class="row mx-0 mb-1">
+                                    <div class="col-12 p-1">
+                                        <div class="form-floating d-flex align-items-end">
+                                            <input type="text" @bind="@Username" class="form-control rounded-5" id="floatingName" placeholder="Isi Username">
+                                            <label for="floatingName">Isi Username</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row mx-0 mb-1">
+                                    <div class="col-12 p-1">
+                                        <div class="form-floating d-flex align-items-end">
+                                            <input type="password" @bind="@Password" @onkeyup="KeyUp" class="form-control rounded-5" id="floatingName" placeholder="Isi Password">
+                                            <label for="floatingName">Isi Password</label>
+                                        </div>
+                                    </div>
+                                </div>
+                               
+                                @if (showError)
+                                {
+                                    <div class="row mx-0 mb-1">
+                                        <div class="col-12 p-1">
+                                            <div class="form-floating d-flex align-items-end">
+                                                <div class="alert alert-warning">
+                                                    username/password salah atau tidak terdaftar
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                }
+
+
+                                <div class="p-1">
+                                    <button type="button" class="btn btn-primary w-100 text-decoration-none rounded-5 py-3 fw-bold text-uppercase mb-1" @onclick="LoginNow" @onkeyup="@KeyUp">Login</button>
+                                    <button type="button" class="btn btn-success w-100 text-decoration-none rounded-5 py-3 fw-bold text-uppercase mb-1" @onclick="DaftarNow">Daftar Baru</button>
+                                    <button type="button" class="btn btn-info w-100 text-decoration-none rounded-5 py-3 fw-bold text-uppercase mb-1" @onclick="GotoForgotPassword">Lupa Password</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+
+    </NotAuthorized>
+</AuthorizeView>
+
+
+@code {
+    bool showError = false;
+    string Username = "";
+    string Password = "";
+    async Task KeyUp(KeyboardEventArgs e)
+    {
+        if (e.Key == "Enter")
+        {
+            await LoginNow();
+            //Console.WriteLine(this.Value);
+        }
+    }
+
+    async Task GotoForgotPassword()
+    {
+        await jsRuntime.InvokeVoidAsync("CloseModal", "signModal");
+        await jsRuntime.InvokeVoidAsync("ShowModal", "forgetModal");
+        //NavMgr.NavigateTo("/auth/forgot-password");
+    }
+    private string encode(string param)
+    {
+        return HttpUtility.UrlEncode(param);
+    }
+    async Task DaftarNow()
+    {
+        await jsRuntime.InvokeVoidAsync("CloseModal", "signModal");
+        await jsRuntime.InvokeVoidAsync("ShowModal","registerModal");
+        //NavMgr.NavigateTo("/auth/register");
+    }
+    async Task LoginNow()
+    {
+        var ErrMsg = "";
+        if (string.IsNullOrEmpty(Username))
+        {
+            ErrMsg += "Tolong isi username.";
+        }
+        if (string.IsNullOrEmpty(Password))
+        {
+            ErrMsg += "Tolong isi password.";
+        }
+        if (ErrMsg.Length > 0)
+        {
+            toastService.ShowError(ErrMsg, "Perhatian");
+        }
+        else
+        {
+            string logUrl = $"/login?paramUsername={encode(Username)}&paramPassword={encode(Password)}";
+            await jsRuntime.InvokeAsync<object>("OpenUrl", logUrl);
+        }
+        //NavMgr.NavigateTo(logUrl);
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavMgr.ToAbsoluteUri(NavMgr.Uri);
+        if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("result", out var resultString))
+        {
+            var result = bool.Parse(resultString);
+            if (!result)
+            {
+                showError = true;
+                toastService.ShowWarning("username/password salah atau tidak terdaftar", "Perhatian");
+            }
+        }
+    }
+}
