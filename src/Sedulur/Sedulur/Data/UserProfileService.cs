@@ -34,7 +34,12 @@ namespace Sedulur.Data
             }
             return false;
         }
-
+        public UserProfile GetItemByUsername(string UName)
+        {
+            if (string.IsNullOrEmpty(UName)) return null;
+            var selItem = db.UserProfiles.Where(x => x.Username.ToLower() == UName.ToLower()).FirstOrDefault();
+            return selItem;
+        }
         public UserProfile GetItemByEmail(string Email)
         {
             if (string.IsNullOrEmpty(Email)) return null;
