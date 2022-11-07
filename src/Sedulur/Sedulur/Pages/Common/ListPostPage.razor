@@ -42,23 +42,30 @@
                                         <img src="@post.ImageUrls" class="img-fluid rounded mb-3" alt="post-img">
                                     </a>
                                 }
-                                <div class="d-flex align-items-center justify-content-between mb-2">
+                            <div class="d-flex align-items-center justify-content-between mb-2">
+                                @if (IsLogin)
+                                {
                                     <div>
                                         @{
                                             var like = LikeList[post.Id];
                                         }
-                                        <a href="#" @onclick="(()=>TogglePostLike(post,like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                        <a href="#" @onclick="(() => TogglePostLike(post, like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
                                     </div>
-                                    <div>
-                                        <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">chat_bubble_outline</span><span>@(post.PostComments == null ? 0 : post.PostComments.Count())</span></a>
-                                    </div>
-                                    <div>
-                                        <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(post.Reposts == null ? 0 : post.Reposts.Count())</span></a>
-                                    </div>
-                                    <div>
-                                        <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
-                                    </div>
+                                }
+                                else
+                                {
+                                    <a href="#"  class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">thumb_up_off_alt</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                }
+                                <div>
+                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">chat_bubble_outline</span><span>@(post.PostComments == null ? 0 : post.PostComments.Count())</span></a>
                                 </div>
+                                <div>
+                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(post.Reposts == null ? 0 : post.Reposts.Count())</span></a>
+                                </div>
+                                <div>
+                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
+                                </div>
+                            </div>
                                 <div class="d-flex align-items-center mb-3" @onclick="(()=>OpenComment(post))">
                                     <span class="material-icons bg-white border-0 text-primary pe-2 md-36">account_circle</span>
                                     <input type="text" class="form-control form-control-sm rounded-3 fw-light" placeholder="Write Your comment">
@@ -165,13 +172,14 @@
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     string Username;
     UserProfile selUser;
-
+    bool IsLogin = false;
     protected override async Task OnInitializedAsync()
     {
         var user = (await authenticationStateTask).User;
 
         if (user.Identity.IsAuthenticated)
         {
+            IsLogin = true;
             Username = user.Identity.Name;
             selUser = UserSvc.GetItemByUsername(Username);
 
