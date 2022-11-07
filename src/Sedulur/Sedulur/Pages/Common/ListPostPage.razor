@@ -145,8 +145,20 @@
     void LoadData()
     {
         ListPost = PostSvc.GetTimeline(UserName);
-        LikeList.Clear();
-        ListPost.ForEach(x => { LikeList.Add(x.Id, x.PostLikes.Any(c=>c.LikedByUserId == selUser.Id)); });
+        if (!string.IsNullOrEmpty(Username)) {
+            LikeList.Clear();
+            ListPost.ForEach(x => {
+                if (x.PostLikes != null)
+                {
+                    LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                }
+                else
+                {
+                    LikeList.Add(x.Id, false);
+                }
+            });
+
+        }
     }
 
     [CascadingParameter]
@@ -164,7 +176,7 @@
             selUser = UserSvc.GetItemByUsername(Username);
 
         }
-        
+
         LoadData();
     }
-}
+    }
