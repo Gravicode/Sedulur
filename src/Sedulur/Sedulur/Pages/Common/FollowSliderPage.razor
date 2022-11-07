@@ -1,0 +1,92 @@
+﻿@inject FollowService FollowSvc
+@inject UserProfileService UserSvc
+<div class="account-slider">
+    @if (ListFollow != null)
+    {
+        @foreach (var usr in ListFollow)
+        {
+            <!-- Account Item -->
+            <div class="account-item">
+                <div class="me-2 bg-white shadow-sm rounded-4 p-3 user-list-item d-flex justify-content-center my-2">
+                    <div class="text-center">
+                        <div class="position-relative d-flex justify-content-center">
+                            <a href="profile" class="text-decoration-none">
+                                <img src="@(string.IsNullOrEmpty(usr.User.PicUrl)?"img/img-user.jpg":usr.User.PicUrl)" class="img-fluid rounded-circle mb-3" alt="profile-img">
+                                @if (usr.User.IsBlueBadge)
+                                {
+                                    <div class="position-absolute">
+                                        <span class="material-icons bg-primary small p-1 fw-bold text-white rounded-circle">done</span>
+                                    </div>
+                                }
+                            </a>
+                        </div>
+                        <p class="fw-bold text-dark m-0">@usr.User.FullName</p>
+                        <p class="small text-muted">@usr.User.Pekerjaan</p>
+                        @if (selUser != null)
+                        {
+                            <div class="btn-group" role="group" aria-label="Basic checkbox toggle button group">                                
+                                <input type="button" class="btn-check" id="btncheck1" >
+                                <label @onclick="(()=>ToggleFollow(usr))" class="btn btn-outline-primary btn-sm px-3 rounded-pill">
+                                    @if (usr.IsFollow)
+                                    {
+                                        <span class="following">Following</span>
+                                    }
+                                    else{
+                                        <span class="follow">+ Follow</span>
+                                    }
+                                </label>
+                            </div>
+                        }
+                    </div>
+                </div>
+            </div>
+        }
+    }
+</div>
+@code {
+
+    public class TempFollow
+    {
+
+        public bool IsFollow
+        {
+            get;set;
+        }
+        public UserProfile User { get; set; }
+    }
+
+    [Parameter]
+    public string Username { get; set; }
+    //public List<UserProfile> ListUser { get; set; }
+    public List<TempFollow> ListFollow { get; set; }
+    UserProfile selUser;
+    protected override async Task OnInitializedAsync()
+    {
+
+        var ListUser = FollowSvc.GetRandomPeople(Username);
+        ListFollow = new();
+        selUser = UserSvc.GetItemByUsername(Username);
+        if (ListUser != null)
+        {
+            foreach (var item in ListUser)
+            {
+                ListFollow.Add(new TempFollow() { IsFollow = false, User = item });
+            }
+        }
+
+    }
+
+    async Task ToggleFollow(TempFollow temp)
+    {
+        temp.IsFollow = !temp.IsFollow;
+        if (temp.IsFollow)
+        {
+            FollowSvc.FollowUser(selUser.Username, selUser.Id, temp.User.Username, temp.User.Id);
+        }
+        else
+        {
+            FollowSvc.UnFollowUser(selUser.Id, temp.User.Id);
+        }
+    }
+
+}

@@ -60,7 +60,6 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/0.4.1/html2canvas.min.js" integrity="sha512-s/XK4vYVXTGeUSv4bRPOuxSDmDlTedEpMEcAQk0t/FMd9V6ft8iXdwSBxV0eD60c6w/tjotSlKu9J2AAW1ckTA==" crossorigin="anonymous"></script>
     <script type="module" src="js/capture.js"></script>
 
-    <script src="_content/BlazorInputFile/inputfile.js"></script>
     <script src="js/downloadfile.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/1.10.20/js/jquery.dataTables.min.js"></script>
     <script type="text/javascript" src="https://cdn.datatables.net/buttons/1.6.1/js/dataTables.buttons.min.js"></script>
@@ -75,6 +74,10 @@
     <!-- Page level custom scripts -->
 
     <script>
+        function OpenFileUpload(uploadid) {
+           
+            $('#'+uploadid+':hidden').trigger('click');
+        }
         function OpenUrl(url) {
             window.location = url;
         }
@@ -186,6 +189,10 @@
         function InitJs() {
             Popular.init();
         }
+
+        window.refreshAll = () => {
+            DotNet.invokeMethodAsync('Sedulur', 'RefreshAll');
+        };
     </script>
 
     <script src="_framework/blazor.server.js"></script>

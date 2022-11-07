@@ -32,6 +32,14 @@ namespace Sedulur.Data
                        select x;
             return data.ToList();
         }
+        
+        public List<PostComment> GetCommentByPostId(long PostId)
+        {
+            var data = from x in db.PostComments.Include(x=>x.User)
+                       where x.PostId == PostId
+                       select x;
+            return data.ToList();
+        }
 
         public List<PostComment> GetAllData()
         {
@@ -52,9 +60,9 @@ namespace Sedulur.Data
                 db.SaveChanges();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
-
+                Console.WriteLine(ex);
             }
             return false;
 

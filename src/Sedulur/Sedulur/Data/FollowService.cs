@@ -17,6 +17,67 @@ namespace Sedulur.Data
             if (db == null) db = new SedulurDB();
 
         }
+
+        public List<UserProfile> GetRandomPeople(string Username, int Number = 10)
+        {
+            var count = db.UserProfiles.Count() - 1;
+            if (count == 0) return default;
+            var take = count > Number ? Number : count;
+            Random rnd = new Random(Environment.TickCount);
+            if (!string.IsNullOrEmpty(Username))
+            {
+                var IFollow = GetFollowBy(Username);
+                var DontFollowIds = IFollow.Select(x => x.Id).ToList();
+                var data = from x in db.UserProfiles
+                           where !DontFollowIds.Contains(x.Id) && x.Username != Username
+                           select x;
+                return data.Take(take).ToList();
+            }
+            else
+            { 
+                var data = from x in db.UserProfiles
+                           where x.Username != Username
+                           select x;
+                return data.Take(take).ToList();
+            }
+        }
+
+        public bool UnFollowUser(long userid, long followuserid)
+        {
+            try
+            {
+                var removeFollow = db.Follows.Where(x => x.UserId == userid && x.FollowUserId == followuserid).FirstOrDefault();
+                if (removeFollow != null)
+                {
+                    db.Follows.Remove(removeFollow);
+                }
+            
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return false;
+        }
+
+        public bool FollowUser(string username,long userid, string followusername,long followuserid)
+        {
+            try
+            {
+                var newFollow = new Follow() { FollowDate = DateHelper.GetLocalTimeNow(), FollowUserName = followusername, FollowUserId = followuserid, UserId = userid, UserName = username };
+                db.Follows.Add(newFollow);
+                db.SaveChanges();
+                return true;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex);
+            }
+            return false;
+        }
+
         public bool DeleteData(object Id)
         {
             var selData = (db.Follows.Where(x => x.Id == (long)Id).FirstOrDefault());
@@ -29,6 +90,22 @@ namespace Sedulur.Data
         {
             var data = from x in db.Follows
                        where x.UserName.Contains(Keyword) || x.FollowUserName.Contains(Keyword)
+                       select x;
+            return data.ToList();
+        }  
+        
+        public List<Follow> GetMyFollower(string Username)
+        {
+            var data = from x in db.Follows.Include(c=>c.User).Include(c=>c.FollowUser)
+                       where x.FollowUserName == Username
+                       select x;
+            return data.ToList();
+        } 
+        
+        public List<Follow> GetFollowBy(string Username)
+        {
+            var data = from x in db.Follows.Include(c=>c.User).Include(c=>c.FollowUser)
+                       where x.UserName == Username
                        select x;
             return data.ToList();
         }

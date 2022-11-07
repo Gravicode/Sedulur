@@ -69,6 +69,8 @@ namespace Sedulur.Data
                        select x;
             return data.ToList();
         }
+        
+        
 
         public List<UserProfile> GetAllData()
         {

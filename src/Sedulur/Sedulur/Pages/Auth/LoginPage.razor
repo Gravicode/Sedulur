@@ -8,10 +8,7 @@
 @inject NavigationManager NavMgr
 <AuthorizeView>
     <Authorized>
-        <b>Hello, @context.User.Identity.Name!</b>
-        <a class="ml-md-auto btn btn-primary"
-           href="/logout?returnUrl=/"
-           target="_top">Logout</a>
+       
     </Authorized>
     <NotAuthorized>
 
@@ -30,16 +27,16 @@
                                 <div class="row mx-0 mb-1">
                                     <div class="col-12 p-1">
                                         <div class="form-floating d-flex align-items-end">
-                                            <input type="text" @bind="@Username" class="form-control rounded-5" id="floatingName" placeholder="Isi Username">
-                                            <label for="floatingName">Isi Username</label>
+                                            <input type="text" @bind="@Username" class="form-control rounded-5" id="floatingName1" placeholder="Isi Username">
+                                            <label for="floatingName1">Isi Username</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row mx-0 mb-1">
                                     <div class="col-12 p-1">
                                         <div class="form-floating d-flex align-items-end">
-                                            <input type="password" @bind="@Password" @onkeyup="KeyUp" class="form-control rounded-5" id="floatingName" placeholder="Isi Password">
-                                            <label for="floatingName">Isi Password</label>
+                                            <input type="password" @bind="@Password" @onkeyup="KeyUp" class="form-control rounded-5" id="floatingPass1" placeholder="Isi Password">
+                                            <label for="floatingPass1">Isi Password</label>
                                         </div>
                                     </div>
                                 </div>

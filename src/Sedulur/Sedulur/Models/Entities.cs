@@ -86,13 +86,28 @@ namespace Sedulur.Models
         [ForeignKey("Post")]
         public long PostId { set; get; }
         [ForeignKey("UserProfile")]
-        public long CommentByUserId { set; get; }
-        public string CommentByUsername { set; get; }
+        public long UserId { set; get; }
+        public string Username { set; get; }
         public DateTime CreatedDate { set; get; }
         public UserProfile User { set; get; }
+        public ICollection<CommentLike> CommentLikes { get; set; }
 
     }
-
+    [Table("commentlike")]
+    public class CommentLike
+    {
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
+        [Key, Column(Order = 0)]
+        public long Id { get; set; }
+        public PostComment Comment { set; get; }
+        [ForeignKey("Comment")]
+        public long CommentId { set; get; }
+        [ForeignKey("UserProfile")]
+        public long LikedByUserId { set; get; }
+        public string LikedByUserName { set; get; }
+        public UserProfile LikedByUser { set; get; }
+        public DateTime CreatedDate { set; get; }
+    }
 
     [Table("contact")]
     public class Contact
@@ -117,6 +132,7 @@ namespace Sedulur.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key, Column(Order = 0)]
         public long Id { get; set; }
+        [ForeignKey("UserProfile")]
         public long UserId { set; get; }
         public string UserName { set; get; }
         public DateTime CreatedDate { set; get; }
@@ -129,9 +145,12 @@ namespace Sedulur.Models
         public string? Hashtags { set; get; }
 
         public ICollection<Repost> Reposts { get; set; }
+        public UserProfile User { get; set; }
 
         public ICollection<PostLike> PostLikes { get; set; }
         public ICollection<PostComment> PostComments { get; set; }
+
+        public ICollection<CommentLike> CommentLikes { get; set; }
     }
 
     public enum LogCategory
@@ -150,7 +169,7 @@ namespace Sedulur.Models
         public LogCategory Category { get; set; }
     }
   
-    [Table("userprofiles")]
+    [Table("userprofile")]
     public class UserProfile
     {
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
@@ -159,7 +178,9 @@ namespace Sedulur.Models
         public string Username { get; set; }
         public string Password { get; set; }
         public string FullName { get; set; }
-        public bool IsBlueBadge { get; set; } = false;
+        public bool IsBlueBadge { get; set; } = true;
+        public string? Pekerjaan { get; set; } = "Manusia";
+        public string? Website { get; set; }
         public string? Phone { get; set; }
         public string? Email { get; set; }
         public string? Alamat { get; set; }
@@ -169,8 +190,11 @@ namespace Sedulur.Models
         public string? Daerah { get; set; }
         public string? Desa { get; set; }
         public string? Kelompok { get; set; }
+        public Char Gender { get; set; } = 'N';
         public Roles Role { set; get; } = Roles.User;
-        
+
+        public DateTime CreatedDate { get; set; }
+
         [InverseProperty(nameof(Follow.FollowUser))]
         public ICollection<Follow> Follows { get; set; }
 
@@ -179,6 +203,7 @@ namespace Sedulur.Models
         public ICollection<Repost> Reposts { get; set; }
         public ICollection<PostLike> PostLikes { get; set; }
         public ICollection<PostComment> PostComments { get; set; }
+        public ICollection<Post> Posts { get; set; }
 
     }
 

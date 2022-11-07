@@ -1,4 +1,5 @@
-﻿<aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
+﻿@inject NavigationManager NavManager
+<aside class="col col-xl-3 order-xl-1 col-lg-6 order-lg-2 col-md-6 col-sm-6 col-12">
     <div class="p-2 bg-light offcanvas offcanvas-start" tabindex="-1" id="offcanvasExample">
         <div class="sidebar-nav mb-3">
             <div class="pb-4">
@@ -8,20 +9,25 @@
             </div>
             <ul class="navbar-nav justify-content-end flex-grow-1">
                 <li class="nav-item">
-                    <a href="index" class="nav-link active"><span class="material-icons me-3">house</span> <span>Feed</span></a>
+                    <a href="index" class="nav-link @(GetActive("","index"))"><span class="material-icons me-3">house</span> <span>Feed</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="profile" class="nav-link"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
+                    <a href="profile" class="nav-link @(GetActive("profile"))"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="explore" class="nav-link"><span class="material-icons me-3">explore</span> <span>Explore</span></a>
+                    <a href="explore" class="nav-link @(GetActive("explore"))"><span class="material-icons me-3">explore</span> <span>Explore</span></a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#languageModal"><span class="material-icons me-3">translate</span> <span>Language</span></a>
                 </li>
-                <li class="nav-item">
-                    <a href="index" class="nav-link"><span class="material-icons me-3">logout</span> <span>Logout</span></a>
-                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <a href="index" class="nav-link"><span class="material-icons me-3">logout</span> <span>Logout</span></a>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+                
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-icons me-3">web</span> Pages
@@ -60,20 +66,25 @@
             </div>
             <ul class="navbar-nav justify-content-end flex-grow-1">
                 <li class="nav-item">
-                    <a href="index" class="nav-link active"><span class="material-icons me-3">house</span> <span>Feed</span></a>
+                    <a href="index" class="nav-link @(GetActive("","index"))"><span class="material-icons me-3">house</span> <span>Feed</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="profile" class="nav-link"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
+                    <a href="profile" class="nav-link @(GetActive("profile"))"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
                 </li>
                 <li class="nav-item">
-                    <a href="explore" class="nav-link"><span class="material-icons me-3">explore</span> <span>Explore</span></a>
+                    <a href="explore" class="nav-link @(GetActive("explore"))"><span class="material-icons me-3">explore</span> <span>Explore</span></a>
                 </li>
                 <li class="nav-item">
                     <a href="#" class="nav-link" data-bs-toggle="modal" data-bs-target="#languageModal"><span class="material-icons me-3">translate</span> <span>Language</span></a>
                 </li>
-                <li class="nav-item">
-                    <a href="/logout" class="nav-link"><span class="material-icons me-3">logout</span> <span>Logout</span></a>
-                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <a href="/logout" class="nav-link"><span class="material-icons me-3">logout</span> <span>Logout</span></a>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+                
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-icons me-3">web</span> Pages
@@ -82,7 +93,12 @@
                         <li><a class="dropdown-item rounded-3 px-2 py-1 my-1" href="contact">Contact</a></li>
                         <li><a class="dropdown-item rounded-3 px-2 py-1 my-1" href="faq">FAQ</a></li>
                         <li><a class="dropdown-item rounded-3 px-2 py-1 my-1" href="error-404">404 Error</a></li>
-                        <li><a class="dropdown-item rounded-3 px-2 py-1 my-1" href="edit-profile">Edit Profile</a></li>
+                        <AuthorizeView>
+                            <Authorized>
+                                <li><a class="dropdown-item rounded-3 px-2 py-1 my-1" href="edit-profile">Edit Profile</a></li>
+                            </Authorized>
+                        </AuthorizeView>
+                       
                     </ul>
                 </li>
                 <li class="nav-item">
@@ -100,5 +116,23 @@
 </aside>
 
 @code {
-
+    string SelectedMenu="";
+    protected override async Task OnInitializedAsync()
+    {
+        var uri = NavManager.Uri.Replace(NavManager.BaseUri, "");
+        SelectedMenu = uri;
+    }
+  
+  
+    string GetActive(params string[] Menus)
+    {
+        foreach (var Menu in Menus)
+        {
+            if (SelectedMenu.ToLower() == Menu.ToLower())
+            {
+                return "active";
+            }
+        }
+        return "";
+    }
 }

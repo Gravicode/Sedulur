@@ -1,0 +1,263 @@
+﻿@inject NavigationManager NavMgr
+@inject AzureBlobHelper AzureBlobHelper;
+@inject IJSRuntime IJS
+@using System.IO
+@using System.Text.Json
+@using Sedulur.Helpers;
+@using System.Text.RegularExpressions;
+@inject IToastService toastService
+@inject UserProfileService UserSvc
+@inject PostCommentService PostCommentSvc
+@inject PostService PostSvc
+@*@implements IDisposable*@
+<div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        @if (CurrentPost != null)
+        {
+            <div class="modal-content rounded-4 overflow-hidden border-0">
+                <div class="modal-header d-none">
+                    <h5 class="modal-title" id="exampleModalLabel2">@CurrentPost.Message</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body p-0">
+                    <div class="row m-0">
+                        <div class="col-sm-7 px-0 m-sm-none">
+                            <!-- Image Slider -->
+                            @if (!string.IsNullOrEmpty(CurrentPost.ImageUrls))
+                            {
+                                <div class="image-slider">
+                                    <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+                                        @{
+                                            var count = 0;
+                                        }
+                                        <div class="carousel-indicators">
+                                            @foreach (var item in CurrentPost.ImageUrls.Split(';'))
+                                            {
+                                                <button type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide-to="@count" class="@(count==0?"active":"")" aria-current="@(count==0?"true":"")" aria-label="Slide @count"></button>
+
+                                                count++;
+
+                                            }
+
+                                        </div>
+                                        @{
+                                            count = 0;
+                                        }
+                                        <div class="carousel-inner">
+                                            @foreach (var item in CurrentPost.ImageUrls.Split(';'))
+                                            {
+                                                <div class="carousel-item @(count==0?"active":"")">
+                                                    <img src="@item" class="d-block w-100" alt="...">
+                                                </div>
+                                                count++;
+
+                                            }
+
+                                        </div>
+                                        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                                            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Previous</span>
+                                        </button>
+                                        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                                            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                                            <span class="visually-hidden">Next</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            }
+                        </div>
+                        <div class="col-sm-5 content-body px-web-0">
+                            <div class="d-flex flex-column h-600">
+                                <div class="d-flex p-3 border-bottom">
+                                    <img src="@(string.IsNullOrEmpty(selUser?.PicUrl) ? "img/img-user.jpg":selUser?.PicUrl)" class="img-fluid rounded-circle user-img" alt="profile-img">
+                                    <div class="d-flex align-items-center justify-content-between w-100">
+                                        <a href="profile" class="text-decoration-none ms-3">
+                                            <div class="d-flex align-items-center">
+                                                <h6 class="fw-bold text-body mb-0">@selUser?.FullName</h6>
+                                                @if (CurrentPost.User.IsBlueBadge)
+                                                {
+                                                    <p class="ms-2 material-icons bg-primary p-0 md-16 fw-bold text-white rounded-circle ov-icon mb-0">done</p>
+                                                }
+                                            </div>
+                                            <p class="text-muted mb-0 small">@($"@{selUser.Username}")</p>
+                                        </a>
+                                        <div class="small dropdown">
+                                            <a href="#" class="text-muted text-decoration-none material-icons ms-2 md-" data-bs-dismiss="modal">close</a>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="comments p-3">
+                                    @if (CurrentPost.PostComments != null)
+                                    {
+                                        @foreach (var comment in CurrentPost.PostComments)
+                                        {
+                                            <div class="d-flex mb-2">
+                                                <img src="@(string.IsNullOrEmpty(comment.User?.PicUrl) ? "img/img-user.jpg":comment.User?.PicUrl)" class="img-fluid rounded-circle" alt="profile-img">
+                                                <div class="ms-2 small">
+                                                    <div class="bg-light px-3 py-2 rounded-4 mb-1 chat-text">
+                                                        <p class="fw-500 mb-0">@comment.User?.FullName</p>
+                                                        <span class="text-muted">@comment.Comment</span>
+                                                    </div>
+                                                    <div class="d-flex align-items-center ms-2">
+                                                        <a href="#" class="small text-muted text-decoration-none">Like</a>
+                                                        <span class="fs-3 text-muted material-icons mx-1">circle</span>
+                                                        <a href="#" class="small text-muted text-decoration-none">Reply</a>
+                                                        <span class="fs-3 text-muted material-icons mx-1">circle</span>
+                                                        <span class="small text-muted">@(DateHelper.GetElapsedTime(comment.CreatedDate))</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        }
+                                    }
+
+
+                                </div>
+                                <div class="border-top p-3 mt-auto">
+                                    <div class="d-flex align-items-center justify-content-between mb-2">
+                                       
+                                        <div>
+                                            <a href="#" @onclick="(()=>TogglePostLike(CurrentPost,PostLike))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(PostLike ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(CurrentPost.PostLikes == null ? 0 : CurrentPost.PostLikes.Count)</span></a>
+                                        </div>
+                                        <div>
+                                            <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(CurrentPost.Reposts == null ? 0 : CurrentPost.Reposts.Count)</span></a>
+                                        </div>
+                                        <div>
+                                            <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
+                                        </div>
+                                    </div>
+                                    <div class="d-flex align-items-center">
+                                        <span class="material-icons bg-white border-0 text-primary pe-2 md-36">account_circle</span>
+                                        <div class="d-flex align-items-center border rounded-4 px-3 py-1 w-100">
+                                            <input type="text" class="form-control form-control-sm p-0 rounded-3 fw-light border-0" @bind="NewComment.Comment" placeholder="Write Your comment">
+                                            <a href="#" @onclick="PostComment" class="bg-white border-0 text-primary ps-2 text-decoration-none">Post</a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer d-none">
+                </div>
+            </div>
+        }
+    </div>
+</div>
+@code {
+    //private DotNetObjectReference<CommentPage>? objRef;
+    string ErrorMsg;
+    [Parameter]
+    public EventCallback<bool> OnCommentSuccess { get; set; }
+    UserProfile selUser;
+    Post _CurrentPost;
+    [Parameter]
+
+    public Post CurrentPost
+    {
+        //set;get;
+
+        get { return _CurrentPost; }
+        set
+        {
+            _CurrentPost = value;
+
+            if (_CurrentPost != null)
+                PostLike = _CurrentPost.PostLikes.Any(x => x.LikedByUserId == selUser.Id && x.PostId == CurrentPost.Id);
+
+        }
+    }
+    [Parameter]
+    public PostComment NewComment { get; set; }
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    [Parameter]
+    public bool PostLike{ set; get; }
+
+    string Username;
+    protected override void OnInitialized()
+    {
+        //objRef = DotNetObjectReference.Create(this);
+    }
+    //[JSInvokable]
+    //public void RefreshComment()
+    //{
+    //    StateHasChanged();
+    //}
+
+    //public void Dispose()
+    //{
+    //    objRef?.Dispose();
+    //}
+    async Task TogglePostLike(Post post, bool Like)
+    {
+        Like = !Like;
+        if (Like)
+        {
+            PostSvc.LikePost(selUser.Id, selUser.Username, post.Id);
+        }
+        else
+        {
+            PostSvc.UnLikePost(selUser.Id, post.Id);
+            var removed = post.PostLikes.Where(x=>x.LikedByUserId == selUser.Id && x.PostId == post.Id).FirstOrDefault();
+            if(removed!=null)
+                CurrentPost.PostLikes.Remove(removed);
+        }
+        PostLike = Like;
+        await IJS.InvokeVoidAsync("refreshAll");
+        StateHasChanged();
+
+    }
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            Username = user.Identity.Name;
+            selUser = UserSvc.GetItemByUsername(Username);
+
+        }
+        if (NewComment == null) NewComment = new();
+
+    }
+
+    public async Task Refresh()
+    {
+        StateHasChanged();
+    }
+
+    async Task PostComment()
+    {
+        ErrorMsg = "";
+
+        if (string.IsNullOrEmpty(NewComment.Comment))
+        {
+            ErrorMsg += "Tolong di isi komentarnya. ";
+
+        }
+
+        if (ErrorMsg.Length > 0)
+        {
+            toastService.ShowWarning(ErrorMsg, "Perhatian");
+            return;
+        }
+
+        NewComment.CreatedDate = DateHelper.GetLocalTimeNow();
+        NewComment.Id = 0;
+        NewComment.Username = Username;
+        NewComment.UserId = selUser.Id;
+        NewComment.PostId = CurrentPost.Id;
+
+        if (PostCommentSvc.InsertData(NewComment))
+        {
+            toastService.ShowSuccess("Komentar berhasil.", "Info");
+            await IJS.InvokeVoidAsync("CloseModal", "commentModal");
+            await OnCommentSuccess.InvokeAsync(true);
+            await IJS.InvokeVoidAsync("refreshAll");
+        }
+        else
+        {
+            toastService.ShowError("Gagal komentar, ga tau kenapa..", "Kecele");
+        }
+    }
+}

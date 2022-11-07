@@ -31,48 +31,61 @@
                         <div class="row mx-0 mb-1">
                             <div class="col-12 p-1">
                                 <div class="form-floating d-flex align-items-end">
-                                    <input type="email" @bind="DataUser.Email" class="form-control rounded-5" id="floatingName" placeholder="Isi Email">
-                                    <label for="floatingName">Isi Email</label>
+                                    <input type="email" @bind="DataUser.Email" class="form-control rounded-5" id="floatingEmail" placeholder="Isi Email">
+                                    <label for="floatingEmail">Isi Email</label>
                                 </div>
                             </div>
                         </div>
                         <div class="row mx-0 mb-1">
                             <div class="col-12 p-1">
                                 <div class="form-floating d-flex align-items-end">
-                                    <input type="text" @bind="DataUser.Phone" class="form-control rounded-5" id="floatingName" placeholder="Isi No Hp">
-                                    <label for="floatingName">Isi No Hp</label>
+                                    <input type="text" @bind="DataUser.Phone" class="form-control rounded-5" id="floatingHp" placeholder="Isi No Hp">
+                                    <label for="floatingHp">Isi No Hp</label>
                                 </div>
                             </div>
                         </div>
                         <div class="row mx-0 mb-1">
                             <div class="col-12 p-1">
                                 <div class="form-floating d-flex align-items-end">
-                                    <input type="text" @bind="DataUser.Username" class="form-control rounded-5" id="floatingName" placeholder="Isi Username">
-                                    <label for="floatingName">Isi Username</label>
+                                    <input type="text" @bind="DataUser.Username" class="form-control rounded-5" id="floatingUserName" placeholder="Isi Username">
+                                    <label for="floatingUserName">Isi Username</label>
                                 </div>
                             </div>
                         </div>
                         <div class="row mx-0 mb-1">
                             <div class="col-12 p-1">
                                 <div class="form-floating d-flex align-items-end">
-                                    <input type="text" @bind="DataUser.Alamat" class="form-control rounded-5" id="floatingName" placeholder="Isi Alamat">
-                                    <label for="floatingName">Isi Alamat</label>
+                                    <select @bind="DataUser.Pekerjaan" class="form-control rounded-5" id="floatingJob" aria-label="Pilih Pekerjaan">
+                                        @foreach(var item in AppConstants.DaftarProfesi.OrderBy(x=>x))
+                                        {
+                                            <option value="@item">@item</option>
+                                        }
+                                    </select>
+                                    <label for="floatingJob">Pilih Pekerjaan</label>
                                 </div>
                             </div>
                         </div>
                         <div class="row mx-0 mb-1">
                             <div class="col-12 p-1">
                                 <div class="form-floating d-flex align-items-end">
-                                    <input type="password" @bind="DataUser.Password" class="form-control rounded-5" id="floatingName" placeholder="Isi Password">
-                                    <label for="floatingName">Isi Password</label>
+                                    <input type="text" @bind="DataUser.Alamat" class="form-control rounded-5" id="floatingAddress" placeholder="Isi Alamat">
+                                    <label for="floatingAddress">Isi Alamat</label>
                                 </div>
                             </div>
                         </div>
                         <div class="row mx-0 mb-1">
                             <div class="col-12 p-1">
                                 <div class="form-floating d-flex align-items-end">
-                                    <input type="password" @bind="RetypePass" class="form-control rounded-5" id="floatingName" placeholder="Ulang Password">
-                                    <label for="floatingName">Ulang Password</label>
+                                    <input type="password" @bind="DataUser.Password" class="form-control rounded-5" id="floatingPass" placeholder="Isi Password">
+                                    <label for="floatingPass">Isi Password</label>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="row mx-0 mb-1">
+                            <div class="col-12 p-1">
+                                <div class="form-floating d-flex align-items-end">
+                                    <input type="password" @bind="RetypePass" class="form-control rounded-5" id="floatingPass2" placeholder="Ulang Password">
+                                    <label for="floatingPass2">Ulang Password</label>
                                 </div>
                             </div>
                         </div>
@@ -88,7 +101,8 @@
                             <div class="col-12 p-1">
                                 <div class="form-floating d-flex align-items-end">
                                    
-                                    <input @bind="TypedCaptcha" type="text" class="form-control rounded-5" id="floatingName" placeholder="ketik captcha" required>
+                                    <input @bind="TypedCaptcha" type="text" class="form-control rounded-5" id="floatingCaptcha" placeholder="ketik captcha" required>
+                                    <label for="floatingCaptcha">Ketik Captcha</label>
                                 </div>
                             </div>
                         </div>
@@ -198,6 +212,7 @@
         var enc = new Encryption();
         DataUser.Role = isPengurus ? Roles.Pengurus : Roles.User;
         DataUser.Password = enc.Encrypt(DataUser.Password);
+        DataUser.CreatedDate = DateHelper.GetLocalTimeNow();
         if (svc.InsertData(DataUser))
         {
             var msg = "Anda telah terdaftar di sedulur, nuhun";
