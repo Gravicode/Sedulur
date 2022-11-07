@@ -21,7 +21,7 @@ namespace Sedulur.Data
         public List<UserProfile> GetRandomPeople(string Username, int Number = 10)
         {
             var count = db.UserProfiles.Count() - 1;
-            if (count == 0) return default;
+            if (count <= 0) return default;
             var take = count > Number ? Number : count;
             Random rnd = new Random(Environment.TickCount);
             if (!string.IsNullOrEmpty(Username))
