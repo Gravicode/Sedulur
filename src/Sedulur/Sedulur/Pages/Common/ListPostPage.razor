@@ -108,6 +108,10 @@
         }
 </div>
 @code {
+    public enum FeedTypes { Timeline, OnlyMe }
+
+    [Parameter]
+    public FeedTypes FeedType { get; set; } = FeedTypes.Timeline;
     [CascadingParameter]
     public MainLayout Layout { get; set; }
     [Parameter]
@@ -151,20 +155,44 @@
 
     void LoadData()
     {
-        ListPost = PostSvc.GetTimeline(UserName);
-        if (!string.IsNullOrEmpty(Username)) {
-            LikeList.Clear();
-            ListPost.ForEach(x => {
-                if (x.PostLikes != null)
+        if (FeedType == FeedTypes.Timeline)
+        {
+            ListPost = PostSvc.GetTimeline(UserName);
+            if (!string.IsNullOrEmpty(Username))
+            {
+                LikeList.Clear();
+                ListPost.ForEach(x =>
                 {
-                    LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
-                }
-                else
-                {
-                    LikeList.Add(x.Id, false);
-                }
-            });
+                    if (x.PostLikes != null)
+                    {
+                        LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                    }
+                    else
+                    {
+                        LikeList.Add(x.Id, false);
+                    }
+                });
 
+            }
+        }else if(FeedType == FeedTypes.OnlyMe)
+        {
+            ListPost = PostSvc.GetMyTimeline(UserName);
+            if (!string.IsNullOrEmpty(Username))
+            {
+                LikeList.Clear();
+                ListPost.ForEach(x =>
+                {
+                    if (x.PostLikes != null)
+                    {
+                        LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                    }
+                    else
+                    {
+                        LikeList.Add(x.Id, false);
+                    }
+                });
+
+            }
         }
     }
 

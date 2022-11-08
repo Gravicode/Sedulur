@@ -67,7 +67,17 @@ namespace Sedulur.Data
                        select x;
             return data.ToList();
         }
-        
+        public List<Post> GetMyTimeline(string Username)
+        {
+            if (string.IsNullOrEmpty(Username)) return default;
+
+            var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.Reposts).Include(c => c.User)
+                       where x.UserName == Username
+                       orderby x.Id descending
+                       select x;
+            return data.Take(100).ToList();
+
+        }
         public List<Post> GetTimeline(string Username)
         {
             if (string.IsNullOrEmpty(Username))

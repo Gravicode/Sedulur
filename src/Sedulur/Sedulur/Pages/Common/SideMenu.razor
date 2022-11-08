@@ -11,9 +11,14 @@
                 <li class="nav-item">
                     <a href="index" class="nav-link @(GetActive("","index"))"><span class="material-icons me-3">house</span> <span>Feed</span></a>
                 </li>
-                <li class="nav-item">
-                    <a href="profile" class="nav-link @(GetActive("profile"))"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
-                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <a href="profile" class="nav-link @(GetActive("profile"))"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+                
                 <li class="nav-item">
                     <a href="explore" class="nav-link @(GetActive("explore"))"><span class="material-icons me-3">explore</span> <span>Explore</span></a>
                 </li>
@@ -27,7 +32,7 @@
                         </li>
                     </Authorized>
                 </AuthorizeView>
-                
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-icons me-3">web</span> Pages
@@ -68,9 +73,14 @@
                 <li class="nav-item">
                     <a href="index" class="nav-link @(GetActive("","index"))"><span class="material-icons me-3">house</span> <span>Feed</span></a>
                 </li>
-                <li class="nav-item">
-                    <a href="profile" class="nav-link @(GetActive("profile"))"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
-                </li>
+                <AuthorizeView>
+                    <Authorized>
+                        <li class="nav-item">
+                            <a href="profile" class="nav-link @(GetActive("profile"))"><span class="material-icons me-3">account_circle</span> <span>Profile</span></a>
+                        </li>
+                    </Authorized>
+                </AuthorizeView>
+              
                 <li class="nav-item">
                     <a href="explore" class="nav-link @(GetActive("explore"))"><span class="material-icons me-3">explore</span> <span>Explore</span></a>
                 </li>
@@ -84,7 +94,7 @@
                         </li>
                     </Authorized>
                 </AuthorizeView>
-                
+
                 <li class="nav-item dropdown">
                     <a class="nav-link dropdown-toggle" href="#" id="offcanvasNavbarDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                         <span class="material-icons me-3">web</span> Pages
@@ -98,7 +108,7 @@
                                 <li><a class="dropdown-item rounded-3 px-2 py-1 my-1" href="edit-profile">Edit Profile</a></li>
                             </Authorized>
                         </AuthorizeView>
-                       
+
                     </ul>
                 </li>
                 <li class="nav-item">
