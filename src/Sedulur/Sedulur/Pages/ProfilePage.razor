@@ -956,7 +956,8 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     string UserName;
-    string OtherUserName = string.Empty;
+    [Parameter]
+    public string OtherUserName { set; get; }
     bool IsSucceed = false;
 
     protected override async Task OnInitializedAsync()
@@ -1002,4 +1003,4 @@
             FollowSvc.UnFollowUser(DataUser.Id, OtherUser.Id);
         }
     }
-}
+    }
