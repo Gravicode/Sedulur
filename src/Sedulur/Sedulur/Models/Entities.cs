@@ -192,7 +192,7 @@ namespace Sedulur.Models
         public string? Kelompok { get; set; }
         public Char Gender { get; set; } = 'N';
         public Roles Role { set; get; } = Roles.User;
-
+        public string? AboutMe { get; set; } = "Manusia biasa.";
         public DateTime CreatedDate { get; set; }
 
         [InverseProperty(nameof(Follow.FollowUser))]

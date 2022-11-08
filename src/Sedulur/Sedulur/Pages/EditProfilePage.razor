@@ -44,9 +44,9 @@
                                 </select>
                                 <label for="floatingName">PEKERJAAN</label>
                             </div>
-                           
+
                             <div class="form-floating mb-3 d-flex align-items-center">
-                                <input type="tel" class="form-control rounded-5" id="floatingBirth" @bind="DataUser.Phone"  placeholder="No HP">
+                                <input type="tel" class="form-control rounded-5" id="floatingBirth" @bind="DataUser.Phone" placeholder="No HP">
                                 <label for="floatingBirth">NO HP</label>
                             </div>
                             <div class="form-floating mb-3 d-flex align-items-center">
@@ -59,7 +59,11 @@
                             </div>
                             <div class="form-floating mb-3 d-flex align-items-center">
                                 <input type="text" class="form-control rounded-5" id="floatingAddr" placeholder="Alamat" @bind="DataUser.Alamat">
-                                <label for="floatingEmail">ALAMAT</label>
+                                <label for="floatingAddr">ALAMAT</label>
+                            </div>
+                            <div class="form-floating mb-3 d-flex align-items-center">
+                                <input type="text" class="form-control rounded-5" id="floatingTentang" placeholder="Tentang Saya" @bind="DataUser.AboutMe">
+                                <label for="floatingTentang">TENTANG SAYA</label>
                             </div>
                             <div class="form-floating mb-3 d-flex align-items-center">
                                 <input type="password" class="form-control rounded-5" id="floatingPass" placeholder="password" @bind="DataUser.Password">

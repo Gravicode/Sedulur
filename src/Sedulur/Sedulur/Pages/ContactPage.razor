@@ -1,4 +1,16 @@
 ﻿@page "/contact"
+
+@inject IJSRuntime jsRuntime
+@using Sedulur.Tools
+@using Sedulur.Models
+@using Sedulur.Data
+@inject NavigationManager NavMgr
+@inject AzureBlobHelper AzureBlobHelper
+@inject IToastService toastService
+@inject Blazored.LocalStorage.ILocalStorageService localStorage
+@inject ContactService ContactSvc
+@inject UserProfileService UserSvc
+
 <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
     <div class="main-content">
         <div class="mb-5">
@@ -15,29 +27,29 @@
                 </div>
                 <div class="row justify-content-center">
                     <div class="col-lg-12">
-                        <form class="form-floating-space" id="contactForm" data-sb-form-api-token="API_TOKEN">
+                        <div class="form-floating-space" id="contactForm" data-sb-form-api-token="API_TOKEN">
                             <!-- Name input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control rounded-5" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
+                                <input @bind="NewContact.FullName" class="form-control rounded-5" id="name" type="text" placeholder="Enter your name..." data-sb-validations="required" />
                                 <label for="name">Full name</label>
                                 <div class="invalid-feedback" data-sb-feedback="name:required">A name is required.</div>
                             </div>
                             <!-- Email address input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control rounded-5" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
+                                <input @bind="NewContact.Email" class="form-control rounded-5" id="email" type="email" placeholder="name@example.com" data-sb-validations="required,email" />
                                 <label for="email">Email address</label>
                                 <div class="invalid-feedback" data-sb-feedback="email:required">An email is required.</div>
                                 <div class="invalid-feedback" data-sb-feedback="email:email">Email is not valid.</div>
                             </div>
                             <!-- Phone number input-->
                             <div class="form-floating mb-3">
-                                <input class="form-control rounded-5" id="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
+                                <input @bind="NewContact.Phone" class="form-control rounded-5" id="phone" type="tel" placeholder="(123) 456-7890" data-sb-validations="required" />
                                 <label for="phone">Phone number</label>
                                 <div class="invalid-feedback" data-sb-feedback="phone:required">A phone number is required.</div>
                             </div>
                             <!-- Message input-->
                             <div class="form-floating mb-3">
-                                <textarea class="form-control rounded-5" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
+                                <textarea @bind="NewContact.Message" class="form-control rounded-5" id="message" type="text" placeholder="Enter your message here..." style="height: 10rem" data-sb-validations="required"></textarea>
                                 <label for="message">Message</label>
                                 <div class="invalid-feedback" data-sb-feedback="message:required">A message is required.</div>
                             </div>
@@ -45,22 +57,31 @@
                             <!---->
                             <!-- This is what your users will see when the form-->
                             <!-- has successfully submitted-->
-                            <div class="d-none" id="submitSuccessMessage">
-                                <div class="text-center mb-3">
-                                    <div class="fw-bolder">Form submission successful!</div>
-                                    To activate this form, sign up at
+                            @if (IsSucceed)
+                            {
+
+
+                                <div id="submitSuccessMessage">
+                                    <div class="text-center mb-3">
+                                        <div class="fw-bolder">Form submission successful!</div>
+                                        To activate this form, sign up at
+                                    </div>
                                 </div>
-                            </div>
-                            <!-- Submit error message-->
-                            <!---->
-                            <!-- This is what your users will see when there is-->
-                            <!-- an error submitting the form-->
-                            <div class="d-none" id="submitErrorMessage">
-                                <div class="text-center text-danger mb-3">Error sending message!</div>
-                            </div>
+                            }
+                            else
+                            {
+                                <!-- Submit error message-->
+                                <!---->
+                                <!-- This is what your users will see when there is-->
+                                <!-- an error submitting the form-->
+                                <div class="d-none" id="submitErrorMessage">
+                                    <div class="text-center text-danger mb-3">Error sending message!</div>
+                                </div>
+                            }
+
                             <!-- Submit Button-->
-                            <div class="d-grid"><button class="btn btn-primary w-100 rounded-5 text-decoration-none py-3 fw-bold text-uppercase m-0" id="submitButton" type="submit">Submit</button></div>
-                        </form>
+                            <div class="d-grid"><button @onclick="Simpan" class="btn btn-primary w-100 rounded-5 text-decoration-none py-3 fw-bold text-uppercase m-0" id="submitButton" type="button">Submit</button></div>
+                        </div>
                     </div>
                 </div>
                 <div class="row row-cols-2 row-cols-lg-4 pt-5">
@@ -82,7 +103,7 @@
                     <div class="col">
                         <div class="feature bg-primary bg-gradient text-white rounded-4 mb-3"><i class="icofont-telephone"></i></div>
                         <div class="h6 fw-bold text-black">Call us</div>
-                        <p class="text-muted mb-0">Call us during normal business hours at (555) 892-9403.</p>
+                        <p class="text-muted mb-0">Call us during normal business hours at (0812-1996-4496).</p>
                     </div>
                 </div>
             </div>
@@ -90,7 +111,80 @@
     </div>
 </main>
 
-
 @code {
+    UserProfile DataUser;
+    public Contact NewContact { get; set; } = new();
+    string RetypePass;
+    string ErrorMsg = string.Empty;
+    bool RegisterSuccess = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    string UserName;
+    bool IsSucceed = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            UserName = user.Identity.Name;
+            DataUser = UserSvc.GetItemByUsername(UserName);
+            NewContact.Email = DataUser.Email;
+            NewContact.FullName = DataUser.FullName;
+            NewContact.Phone = DataUser.Phone;
+
+        }
+        NewContact.IsReplied = false;
+
+    }
+    void Simpan()
+    {
+        IsSucceed = false;
+        ErrorMsg = "";
+
+
+        if (string.IsNullOrEmpty(NewContact.Email))
+        {
+            ErrorMsg += "Tolong di isi email. ";
+
+        }
+        if (string.IsNullOrEmpty(NewContact.Phone))
+        {
+            ErrorMsg += "Tolong di isi no hp. ";
+
+        }
+        if (string.IsNullOrEmpty(NewContact.FullName))
+        {
+            ErrorMsg += "Tolong di isi nama lengkap. ";
+
+        }
+        if (string.IsNullOrEmpty(NewContact.Message))
+        {
+            ErrorMsg += "Tolong di isi pesan. ";
+
+        }
+
+
+        if (ErrorMsg.Length > 0)
+        {
+            toastService.ShowWarning(ErrorMsg, "Perhatian");
+            return;
+        }
+        NewContact.CreatedDate = DateHelper.GetLocalTimeNow();
+        if (ContactSvc.InsertData(NewContact))
+        {
+            toastService.ShowSuccess("Pesan Anda sudah di terima, nuhun.", "Info");
+            IsSucceed = true;
+        }
+       
+    }
+
+    void Kembali()
+    {
+        NavMgr.NavigateTo("/");
+    }
+
 
 }

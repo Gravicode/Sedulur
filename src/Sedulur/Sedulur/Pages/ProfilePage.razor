@@ -1,54 +1,85 @@
 ﻿@page "/profile"
+@page "/profile/{OtherUserName}"
+@inject UserProfileService UserSvc
+@inject FollowService FollowSvc
 <!-- Main Content -->
 <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
     <div class="main-content">
-        <div class="mb-4 d-flex align-items-center">
-            <div class="d-flex align-items-center">
-                <a href="index" class="material-icons text-dark text-decoration-none m-none me-3">arrow_back</a>
-                <p class="ms-2 mb-0 fw-bold text-body fs-6">Shay Jordon</p>
-            </div>
-            <a href="#" class="text-decoration-none material-icons md-20 ms-auto text-muted">share</a>
-        </div>
-        <div class="bg-white rounded-4 shadow-sm profile">
-            <div class="d-flex align-items-center px-3 pt-3">
-                <img src="img/rmate2.jpg" class="img-fluid rounded-circle" alt="profile-img">
-                <div class="ms-3">
-                    <h6 class="mb-0 d-flex align-items-start text-body fs-6 fw-bold">Shay Jordon <span class="ms-2 material-icons bg-primary p-0 md-16 fw-bold text-white rounded-circle ov-icon">done</span></h6>
-                    <p class="text-muted mb-0">@("@shay-jordon")</p>
+        @if (SelectedUser != null)
+        {
+            <div class="mb-4 d-flex align-items-center">
+                <div class="d-flex align-items-center">
+                    <a href="index" class="material-icons text-dark text-decoration-none m-none me-3">arrow_back</a>
+                    <p class="ms-2 mb-0 fw-bold text-body fs-6">@SelectedUser.FullName</p>
                 </div>
-                <div class="ms-auto btn-group" role="group" aria-label="Basic checkbox toggle button group">
-                    <input type="checkbox" class="btn-check" id="btncheck1">
-                    <label class="btn btn-outline-primary btn-sm px-3 rounded-pill" for="btncheck1"><span class="follow">+ Follow</span><span class="following d-none">Following</span></label>
-                </div>
+                <a href="#" class="text-decoration-none material-icons md-20 ms-auto text-muted">share</a>
             </div>
-            <div class="p-3">
-                <p class="mb-2 fs-6">The standard chunk of Lorem Ipsum used since is reproduced. Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature..</p>
-                <p class="d-flex align-items-center mb-3">
-                    <span class="material-icons me-2 rotate-320 text-muted md-16">link</span><a href="profile" class="text-decoration-none">profile/shayjordon</a>
-                    <span class="material-icons me-2 text-muted md-16 ms-4">calendar_today</span><span>Joined on Feb 2021</span>
-                </p>
-                <div class="d-flex followers">
-                    <div>
-                        <p class="mb-0">391k <span class="text-muted">Followers</span></p>
-                        <div class="d-flex">
-                            <img src="img/rmate1.jpg" class="img-fluid rounded-circle" alt="follower-img">
-                            <img src="img/rmate2.jpg" class="img-fluid rounded-circle" alt="follower-img">
-                            <img src="img/rmate3.jpg" class="img-fluid rounded-circle" alt="follower-img">
-                            <img src="img/rmate4.jpg" class="img-fluid rounded-circle" alt="follower-img">
-                            <img src="img/rmate5.jpg" class="img-fluid rounded-circle" alt="follower-img">
+            <div class="bg-white rounded-4 shadow-sm profile">
+                <div class="d-flex align-items-center px-3 pt-3">
+                    <img src="@(string.IsNullOrEmpty(SelectedUser.PicUrl) ? "img/img-user.jpg" : SelectedUser.PicUrl)" class="img-fluid rounded-circle" alt="profile-img">
+                    <div class="ms-3">
+                        @if (SelectedUser.IsBlueBadge)
+                        {
+                            <h6 class="mb-0 d-flex align-items-start text-body fs-6 fw-bold">@SelectedUser.FullName (@SelectedUser.Pekerjaan) <span class="ms-2 material-icons bg-primary p-0 md-16 fw-bold text-white rounded-circle ov-icon">done</span></h6>
+                        }
+                        <p class="text-muted mb-0">@($"@{SelectedUser.Username}")</p>
+                    </div>
+                    @if (SelectedUser.Username != UserName)
+                    {
+
+
+                        <div class="ms-auto btn-group" role="group" aria-label="Basic checkbox toggle button group">
+
+                            <label class="btn btn-outline-primary btn-sm px-3 rounded-pill" @onclick="ToggleFollow">
+                                @if (!IsFollowing)
+                                {
+                                    <span class="follow">+ Follow</span>
+                                }
+                                else
+                                {
+                                    <span class="following">Following</span>
+                                }
+                            </label>
+                        </div>
+                    }
+                </div>
+                <div class="p-3">
+                    <p class="mb-2 fs-6">@SelectedUser.AboutMe</p>
+                    <p class="d-flex align-items-center mb-3">
+                        <span class="material-icons me-2 rotate-320 text-muted md-16">link</span><a href="@($"/user/{SelectedUser.Username}")" class="text-decoration-none">profile/@SelectedUser.Username</a>
+                        <span class="material-icons me-2 text-muted md-16 ms-4">calendar_today</span><span>Joined on @SelectedUser.CreatedDate.ToString("dd MMM yyyy")</span>
+                    </p>
+                    <div class="d-flex followers">
+                        <div>
+                            <p class="mb-0">@(ListFollowBy==null? 0 : ListFollowBy.Count.ToString("n0"))<span class="text-muted">Followers</span></p>
+                            <div class="d-flex">
+                                @if (ListFollowBy != null)
+                                {
+                                    foreach (var usr in ListFollowBy.Take(5))
+                                    {
+                                        <img src="@(string.IsNullOrEmpty(usr.FollowUser.PicUrl)?"img/img-user.jpg":usr.FollowUser.PicUrl)" class="img-fluid rounded-circle" alt="follower-img">
+
+                                    }
+                                }
+                            </div>
+                        </div>
+                        <div class="ms-5 ps-5">
+                            <p class="mb-0">@(ListFollowing==null? 0 : ListFollowing.Count.ToString("n0")) <span class="text-muted">Following</span></p>
+                            <div class="d-flex">
+                                @if (ListFollowing != null)
+                                {
+                                    foreach (var usr in ListFollowing.Take(3))
+                                    {
+                                        <img src="@(string.IsNullOrEmpty(usr.FollowUser.PicUrl)?"img/img-user.jpg":usr.FollowUser.PicUrl)" class="img-fluid rounded-circle" alt="follower-img">
+                                    }
+                                }
+
+                            </div>
                         </div>
                     </div>
-                    <div class="ms-5 ps-5">
-                        <p class="mb-0">3 <span class="text-muted">Following</span></p>
-                        <div class="d-flex">
-                            <img src="img/rmate1.jpg" class="img-fluid rounded-circle" alt="follower-img">
-                            <img src="img/rmate2.jpg" class="img-fluid rounded-circle" alt="follower-img">
-                            <img src="img/rmate3.jpg" class="img-fluid rounded-circle" alt="follower-img">
-                        </div>
-                    </div>
                 </div>
             </div>
-        </div>
+        }
         <ul class="top-osahan-nav-tab nav nav-pills justify-content-center nav-justified mb-4 shadow-sm rounded-4 overflow-hidden bg-white mt-4" id="pills-tab" role="tablist">
             <li class="nav-item" role="presentation">
                 <button class="p-3 nav-link text-muted active" id="pills-feed-tab" data-bs-toggle="pill" data-bs-target="#pills-feed" type="button" role="tab" aria-controls="pills-feed" aria-selected="true">Vogel(2)</button>
@@ -909,5 +940,66 @@
 </main>
 
 @code {
+    UserProfile DataUser;
+    UserProfile OtherUser;
+    UserProfile SelectedUser;
+    List<Follow> MyFollowing;
+    List<Follow> MyFollowBy;
 
+    List<Follow> ListFollowing;
+    List<Follow> ListFollowBy;
+    string RetypePass;
+    string ErrorMsg = string.Empty;
+    bool RegisterSuccess = false;
+    bool IsFollowing = false;
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    string UserName;
+    string OtherUserName = string.Empty;
+    bool IsSucceed = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+
+            UserName = user.Identity.Name;
+            DataUser = UserSvc.GetItemByUsername(UserName);
+            MyFollowBy = FollowSvc.GetFollowBy(UserName);
+            MyFollowing = FollowSvc.GetMyFollower(UserName);
+            if (!string.IsNullOrEmpty(OtherUserName))
+            {
+                OtherUser = UserSvc.GetItemByUsername(OtherUserName);
+                SelectedUser = OtherUser;
+                ListFollowBy = FollowSvc.GetFollowBy(OtherUserName);
+                ListFollowing = FollowSvc.GetMyFollower(OtherUserName);
+                IsFollowing = MyFollowBy.Any(x => x.FollowUserName == OtherUserName);
+            }
+            else
+            {
+                SelectedUser = DataUser;
+                ListFollowBy = MyFollowBy;
+                ListFollowing = MyFollowing;
+            }
+
+        }
+
+
+    }
+
+    async Task ToggleFollow()
+    {
+        IsFollowing = !IsFollowing;
+        if (IsFollowing)
+        {
+            FollowSvc.FollowUser(DataUser.Username, DataUser.Id, OtherUser.Username, OtherUser.Id);
+        }
+        else
+        {
+            FollowSvc.UnFollowUser(DataUser.Id, OtherUser.Id);
+        }
+    }
 }
