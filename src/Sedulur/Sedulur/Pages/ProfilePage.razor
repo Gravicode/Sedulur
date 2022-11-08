@@ -70,7 +70,7 @@
                                 {
                                     foreach (var usr in ListFollowing.Take(3))
                                     {
-                                        <img src="@(string.IsNullOrEmpty(usr.FollowUser.PicUrl)?"img/img-user.jpg":usr.FollowUser.PicUrl)" class="img-fluid rounded-circle" alt="follower-img">
+                                        <img src="@(string.IsNullOrEmpty(usr.User.PicUrl)?"img/img-user.jpg":usr.User.PicUrl)" class="img-fluid rounded-circle" alt="follower-img">
                                     }
                                 }
 
