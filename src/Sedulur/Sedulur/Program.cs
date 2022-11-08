@@ -46,6 +46,7 @@ builder.Services.AddTransient<RepostService>();
 builder.Services.AddTransient<FollowService>();
 builder.Services.AddTransient<TrendingService>();
 builder.Services.AddTransient<LogService>();
+builder.Services.AddTransient<ContactService>();
 
 builder.Services.AddTransient<UserProfileService>();
 
