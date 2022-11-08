@@ -155,45 +155,117 @@
 
     void LoadData()
     {
-        if (FeedType == FeedTypes.Timeline)
+        switch (FeedType)
         {
-            ListPost = PostSvc.GetTimeline(UserName);
-            if (!string.IsNullOrEmpty(Username))
-            {
-                LikeList.Clear();
-                ListPost.ForEach(x =>
+            case FeedTypes.Timeline:
                 {
-                    if (x.PostLikes != null)
+                    ListPost = PostSvc.GetTimeline(UserName);
+                    if (!string.IsNullOrEmpty(Username))
                     {
-                        LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
-                    }
-                    else
-                    {
-                        LikeList.Add(x.Id, false);
-                    }
-                });
+                        LikeList.Clear();
+                        ListPost.ForEach(x =>
+                        {
+                            if (x.PostLikes != null)
+                            {
+                                LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                            }
+                            else
+                            {
+                                LikeList.Add(x.Id, false);
+                            }
+                        });
 
-            }
-        }else if(FeedType == FeedTypes.OnlyMe)
-        {
-            ListPost = PostSvc.GetMyTimeline(UserName);
-            if (!string.IsNullOrEmpty(Username))
-            {
-                LikeList.Clear();
-                ListPost.ForEach(x =>
+                    }
+                }
+                break;
+            case FeedTypes.OnlyMe:
                 {
-                    if (x.PostLikes != null)
+                    ListPost = PostSvc.GetMyTimeline(UserName);
+                    if (!string.IsNullOrEmpty(Username))
                     {
-                        LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
-                    }
-                    else
-                    {
-                        LikeList.Add(x.Id, false);
-                    }
-                });
+                        LikeList.Clear();
+                        ListPost.ForEach(x =>
+                        {
+                            if (x.PostLikes != null)
+                            {
+                                LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                            }
+                            else
+                            {
+                                LikeList.Add(x.Id, false);
+                            }
+                        });
 
-            }
+                    }
+                }
+                break;
+            case FeedTypes.Liked:
+                {
+                    ListPost = PostSvc.GetLikedPosts(UserName);
+                    if (!string.IsNullOrEmpty(Username))
+                    {
+                        LikeList.Clear();
+                        ListPost.ForEach(x =>
+                        {
+                            if (x.PostLikes != null)
+                            {
+                                LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                            }
+                            else
+                            {
+                                LikeList.Add(x.Id, false);
+                            }
+                        });
+
+                    }
+                }
+                break;
+            case FeedTypes.Repost:
+                {
+                    ListPost = PostSvc.GetRepost(UserName);
+                    if (!string.IsNullOrEmpty(Username))
+                    {
+                        LikeList.Clear();
+                        ListPost.ForEach(x =>
+                        {
+                            if (x.PostLikes != null)
+                            {
+                                LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                            }
+                            else
+                            {
+                                LikeList.Add(x.Id, false);
+                            }
+                        });
+
+                    }
+                }
+                break;
+            case FeedTypes.Mention:
+                {
+                    ListPost = PostSvc.GetPostMentions(UserName);
+                    if (!string.IsNullOrEmpty(Username))
+                    {
+                        LikeList.Clear();
+                        ListPost.ForEach(x =>
+                        {
+                            if (x.PostLikes != null)
+                            {
+                                LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                            }
+                            else
+                            {
+                                LikeList.Add(x.Id, false);
+                            }
+                        });
+
+                    }
+                }
+                break;
         }
+
+
+
     }
 
     [CascadingParameter]
