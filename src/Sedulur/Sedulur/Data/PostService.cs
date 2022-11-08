@@ -67,11 +67,44 @@ namespace Sedulur.Data
                        select x;
             return data.ToList();
         }
+        public List<Post> GetPostMentions(string Username)
+        {
+            if (string.IsNullOrEmpty(Username)) return default;
+
+            var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User)
+                       where x.Mentions.Contains(Username)
+                       orderby x.Id descending
+                       select x;
+            return data.Take(100).ToList();
+
+        }
+        public List<Post> GetRepost(string Username)
+        {
+            if (string.IsNullOrEmpty(Username)) return default;
+
+            var data = from x in db.Reposts.Include(c => c.Post).Include(c => c.Post.PostComments).Include(c => c.Post.PostLikes).Include(c => c.Post.User)
+                       where x.RepostByUserName == Username
+                       orderby x.PostId descending
+                       select x.Post;
+            return data.Take(100).ToList();
+
+        }
+        public List<Post> GetLikedPosts(string Username)
+        {
+            if (string.IsNullOrEmpty(Username)) return default;
+
+            var data = from x in db.PostLikes.Include(c=>c.Post).Include(c => c.Post.PostComments).Include(c => c.Post.PostLikes).Include(c => c.Post.User)
+                       where x.LikedByUserName == Username
+                       orderby x.PostId descending
+                       select x.Post;
+            return data.Take(100).ToList();
+
+        }
         public List<Post> GetMyTimeline(string Username)
         {
             if (string.IsNullOrEmpty(Username)) return default;
 
-            var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.Reposts).Include(c => c.User)
+            var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User)
                        where x.UserName == Username
                        orderby x.Id descending
                        select x;
@@ -82,7 +115,7 @@ namespace Sedulur.Data
         {
             if (string.IsNullOrEmpty(Username))
             {
-                var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.Reposts).Include(c => c.User)
+                var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User)
                            
                            orderby x.Id descending
                            select x;
@@ -90,12 +123,12 @@ namespace Sedulur.Data
             }
             else
             {
-                var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.Reposts).Include(c => c.User)
+                var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User)
                            where x.UserName == Username
                            orderby x.Id descending
                            select x;
                 var followedUser = db.Follows.Where(x => x.UserName == Username).Select(x => x.FollowUserId).ToList();
-                var data2 = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.Reposts).Include(c => c.User)
+                var data2 = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User)
                             where followedUser.Contains(x.UserId)
                             orderby x.Id descending
                             select x;

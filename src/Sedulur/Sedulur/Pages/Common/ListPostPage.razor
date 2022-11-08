@@ -108,7 +108,7 @@
         }
 </div>
 @code {
-    public enum FeedTypes { Timeline, OnlyMe }
+    public enum FeedTypes { Timeline, OnlyMe, Liked, Repost, Mention }
 
     [Parameter]
     public FeedTypes FeedType { get; set; } = FeedTypes.Timeline;
