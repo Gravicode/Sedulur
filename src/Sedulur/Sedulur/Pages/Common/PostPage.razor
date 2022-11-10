@@ -137,7 +137,7 @@
             await IJS.InvokeVoidAsync("CloseModal", "postModal");
             await IJS.InvokeVoidAsync("refreshAll");
             PostDataChanged?.Invoke();
-            
+
         }
         else
         {
@@ -152,6 +152,7 @@
         {
             var ms = new MemoryStream();
             await file.OpenReadStream().CopyToAsync(ms);
+            var arr = ms.ToArray();
             var bytes = ImageHelper.FixedSize(ms, 800, 600, false);
             string newName = string.Empty;
 
