@@ -56,7 +56,7 @@
                 </AuthorizeView>
                
                 <!-- Feeds -->
-                <ListPostPage FeedType="ListPostPage.FeedTypes.Trending" @ref="ListPostPageRef" UserName="@Username"></ListPostPage>
+                <ListPostPage FeedType="ListPostPage.FeedTypes.Trending" @ref="ListPostPageRef2" UserName="@Username"></ListPostPage>
             </div>
         </div>
     </div>
@@ -74,6 +74,7 @@
 @code {
     bool IsLoading { get; set; } = false;
     ListPostPage ListPostPageRef;
+    ListPostPage ListPostPageRef2;
 
     static Action _action;
     [CascadingParameter]
@@ -99,6 +100,7 @@
     private void RefreshData()
     {
         ListPostPageRef.Refresh();
+        ListPostPageRef2.Refresh();
     }
 
     [JSInvokable("RefreshAll")]
