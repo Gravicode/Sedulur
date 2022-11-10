@@ -43,6 +43,30 @@ namespace Sedulur.Data
             return db.Trendings.Where(x => x.Id == (long)Id).FirstOrDefault();
         }
 
+        public bool InsertFromPost(UserProfile user, Post data)
+        {
+            try
+            {
+                if (!string.IsNullOrEmpty(data.Hashtags))
+                {
+                    foreach(var hashtag in data.Hashtags.Split(';'))
+                    {
+                        var newTrend = new Trending() { CreatedDate = data.CreatedDate, Hashtag = hashtag, Latitude = user.Latitude, Longitude = user.Longitude, Location = user.Alamat  };
+                        db.Trendings.Add(newTrend);
+                    }
+                }
+                
+                db.SaveChanges();
+                return true;
+            }
+            catch
+            {
+
+            }
+            return false;
+
+        }
+
 
         public bool InsertData(Trending data)
         {

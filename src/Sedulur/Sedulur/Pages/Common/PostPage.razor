@@ -8,6 +8,7 @@
 @inject IToastService toastService
 @inject UserProfileService UserSvc
 @inject PostService PostSvc
+@inject TrendingService TrendingSvc
 
 <div class="modal fade" id="postModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
@@ -131,6 +132,7 @@
         }
         if (PostSvc.InsertData(NewPost))
         {
+            TrendingSvc.InsertFromPost(selUser, NewPost);
             toastService.ShowSuccess("Posting berhasil.", "Info");
             await IJS.InvokeVoidAsync("CloseModal", "postModal");
             await IJS.InvokeVoidAsync("refreshAll");

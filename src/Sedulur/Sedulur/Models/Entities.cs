@@ -10,6 +10,14 @@ using System.Threading.Tasks;
 
 namespace Sedulur.Models
 {
+    #region helpers model
+    public class PeopleByJob
+    {
+        public string Job { get; set; }
+        public List<UserProfile> Users { get; set; }
+    }
+    public record PopularPeople(string Username, int TotalFollower, UserProfile User);
+    #endregion
 
     [Table("trending")]
     public class Trending
@@ -17,10 +25,11 @@ namespace Sedulur.Models
         [DatabaseGenerated(DatabaseGeneratedOption.Identity)]
         [Key, Column(Order = 0)]
         public long Id { get; set; }
-
         public string Hashtag { set; get; }
         public DateTime CreatedDate { set; get; }
         public string? Location { set; get; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
     }
 
     [Table("follow")]
@@ -194,6 +203,8 @@ namespace Sedulur.Models
         public Roles Role { set; get; } = Roles.User;
         public string? AboutMe { get; set; } = "Manusia biasa.";
         public DateTime CreatedDate { get; set; }
+        public double? Longitude { get; set; }
+        public double? Latitude { get; set; }
 
         [InverseProperty(nameof(Follow.FollowUser))]
         public ICollection<Follow> Follows { get; set; }
@@ -204,6 +215,8 @@ namespace Sedulur.Models
         public ICollection<PostLike> PostLikes { get; set; }
         public ICollection<PostComment> PostComments { get; set; }
         public ICollection<Post> Posts { get; set; }
+
+      
 
     }
 

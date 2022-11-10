@@ -108,7 +108,7 @@
         }
 </div>
 @code {
-    public enum FeedTypes { Timeline, OnlyMe, Liked, Repost, Mention }
+    public enum FeedTypes { Timeline, OnlyMe, Liked, Repost, Mention, Trending }
 
     [Parameter]
     public FeedTypes FeedType { get; set; } = FeedTypes.Timeline;
@@ -244,6 +244,27 @@
             case FeedTypes.Mention:
                 {
                     ListPost = PostSvc.GetPostMentions(UserName);
+                    if (!string.IsNullOrEmpty(Username))
+                    {
+                        LikeList.Clear();
+                        ListPost.ForEach(x =>
+                        {
+                            if (x.PostLikes != null)
+                            {
+                                LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                            }
+                            else
+                            {
+                                LikeList.Add(x.Id, false);
+                            }
+                        });
+
+                    }
+                }
+                break;
+                case FeedTypes.Trending:
+                {
+                    ListPost = PostSvc.GetTrendingPosts();
                     if (!string.IsNullOrEmpty(Username))
                     {
                         LikeList.Clear();

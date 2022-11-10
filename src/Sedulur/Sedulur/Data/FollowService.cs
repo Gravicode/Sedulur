@@ -17,7 +17,58 @@ namespace Sedulur.Data
             if (db == null) db = new SedulurDB();
 
         }
-
+      
+        public List<PopularPeople> GetPopularPeople(string Username, int Number = 5)
+        {
+            var IFollow = GetFollowBy(Username);
+            var DontFollowIds = IFollow.Select(x => x.FollowUserId).ToList();
+            var notFollowByMeList =from x in db.Follows.Include(c => c.User).Include(c => c.FollowUser)
+                                           where x.UserName != Username && x.FollowUserName != Username && !DontFollowIds.Contains(x.FollowUserId)
+                                           select x;
+            if (notFollowByMeList == null || notFollowByMeList.Count() <= 0 ) return default;
+            
+            var listPopular = notFollowByMeList.GroupBy(info => info.FollowUserName)
+                        .Select(group => new PopularPeople(group.Key,
+                            group.Count(),
+                            group.First().FollowUser)
+                        ).AsEnumerable()
+                        .OrderBy(x => x.Username).Take(Number).ToList();
+            return listPopular;
+        }
+        public List<PeopleByJob> GetPeopleByJob(string Username, int Number = 5)
+        {
+            var retVal = new List<PeopleByJob>();
+            var count = db.UserProfiles.Count() - 1;
+            if (count <= 0) return default;
+            List<UserProfile> data;
+            if (!string.IsNullOrEmpty(Username))
+            {
+                var IFollow = GetFollowBy(Username);
+                var DontFollowIds = IFollow.Select(x => x.FollowUserId).ToList();
+                data = (from x in db.UserProfiles
+                           where !DontFollowIds.Contains(x.Id) && x.Username != Username
+                           select x).ToList();
+                
+            }
+            else
+            {
+                data = (from x in db.UserProfiles
+                           where x.Username != Username
+                           select x).ToList();
+            }
+            if ( data !=null && data.Count > 0)
+            {
+                
+                var jobs = data.Select(x => x.Pekerjaan).Distinct();
+                foreach(var job in jobs)
+                {
+                    var newJob = new PeopleByJob() { Job = job, Users = data.Where(x=>x.Pekerjaan == job).Select(x=>x).ToList() };
+                    retVal.Add(newJob);
+                }
+                return retVal;
+            }
+            return default;
+        }
         public List<UserProfile> GetRandomPeople(string Username, int Number = 10)
         {
             var count = db.UserProfiles.Count() - 1;
@@ -27,7 +78,7 @@ namespace Sedulur.Data
             if (!string.IsNullOrEmpty(Username))
             {
                 var IFollow = GetFollowBy(Username);
-                var DontFollowIds = IFollow.Select(x => x.Id).ToList();
+                var DontFollowIds = IFollow.Select(x => x.FollowUserId).ToList();
                 var data = from x in db.UserProfiles
                            where !DontFollowIds.Contains(x.Id) && x.Username != Username
                            select x;

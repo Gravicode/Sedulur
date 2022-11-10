@@ -1,5 +1,6 @@
 ﻿using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
+using PdfSharp.Pdf.Content.Objects;
 using Sedulur.Data;
 using Sedulur.Models;
 using System;
@@ -45,6 +46,7 @@ namespace Sedulur.Data
             return false;
         }
 
+        
         public bool LikePost(long userid,string username, long postid)
         {
             try
@@ -66,6 +68,31 @@ namespace Sedulur.Data
                        where x.Message.Contains(Keyword) 
                        select x;
             return data.ToList();
+        }
+        public List<Post> GetTrendingPosts(int Number = 25)
+        {
+          
+            var listTrend = db.Trendings.GroupBy(info => info.Hashtag)
+                        .Select(group => new
+                        {
+                            hashtag =  group.Key,
+                            count = group.Count(),                            
+                        }
+            ).AsEnumerable()
+                        .OrderByDescending(x => x.count).Take(10).ToList();
+            var hashtags = new HashSet<string>();
+            listTrend.ForEach(x => hashtags.Add(x.hashtag));
+            var data = db.Posts.AsEnumerable().Where(x => LikeHashtag(x.Hashtags)).ToList();
+            return data.Take(Number).ToList();
+            bool LikeHashtag(string? posthashtag)
+            {
+                if (posthashtag == null) return false;
+                foreach(var hashtag in posthashtag.Split(';'))
+                {
+                    if (hashtags.Contains(hashtag)) return true;
+                }
+                return false;
+            }
         }
         public List<Post> GetPostMentions(string Username)
         {
@@ -156,9 +183,9 @@ namespace Sedulur.Data
                 db.SaveChanges();
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
-
+                Console.WriteLine(ex);
             }
             return false;
 
