@@ -82,7 +82,7 @@ namespace Sedulur.Data
                         .OrderByDescending(x => x.count).Take(10).ToList();
             var hashtags = new HashSet<string>();
             listTrend.ForEach(x => hashtags.Add(x.hashtag));
-            var data = db.Posts.AsEnumerable().Where(x => LikeHashtag(x.Hashtags)).ToList();
+            var data = db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User).AsEnumerable().Where(x => LikeHashtag(x.Hashtags)).ToList();
             return data.Take(Number).ToList();
             bool LikeHashtag(string? posthashtag)
             {
