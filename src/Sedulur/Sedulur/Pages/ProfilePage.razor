@@ -51,7 +51,7 @@
                     </p>
                     <div class="d-flex followers">
                         <div>
-                            <p class="mb-0">@(ListFollowBy==null? 0 : ListFollowBy.Count.ToString("n0"))<span class="text-muted">Followers</span></p>
+                            <p class="mb-0">@(ListFollowBy == null ? 0 : ListFollowBy.Count.ToString("n0"))<span class="text-muted">Followers</span></p>
                             <div class="d-flex">
                                 @if (ListFollowBy != null)
                                 {
@@ -64,7 +64,7 @@
                             </div>
                         </div>
                         <div class="ms-5 ps-5">
-                            <p class="mb-0">@(ListFollowing==null? 0 : ListFollowing.Count.ToString("n0")) <span class="text-muted">Following</span></p>
+                            <p class="mb-0">@(ListFollowing == null ? 0 : ListFollowing.Count.ToString("n0")) <span class="text-muted">Following</span></p>
                             <div class="d-flex">
                                 @if (ListFollowing != null)
                                 {
@@ -119,15 +119,19 @@
             </div>
         </div>
     </div>
-    <div class="text-center mt-4">
-        <div class="spinner-border" role="status">
-            <span class="visually-hidden">Loading...</span>
+    @if (IsLoading)
+    {
+        <div class="text-center mt-4">
+            <div class="spinner-border" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p class="mb-0 mt-2">Loading</p>
         </div>
-        <p class="mb-0 mt-2">Loading</p>
-    </div>
+    }
 </main>
 
 @code {
+    public bool IsLoading { get; set; }
     UserProfile DataUser;
     UserProfile OtherUser;
     UserProfile SelectedUser;
@@ -156,29 +160,35 @@
         {
 
             UserName = user.Identity.Name;
-            DataUser = UserSvc.GetItemByUsername(UserName);
-            MyFollowBy = FollowSvc.GetFollowBy(UserName);
-            MyFollowing = FollowSvc.GetMyFollower(UserName);
-            if (!string.IsNullOrEmpty(OtherUserName))
-            {
-                OtherUser = UserSvc.GetItemByUsername(OtherUserName);
-                SelectedUser = OtherUser;
-                ListFollowBy = FollowSvc.GetFollowBy(OtherUserName);
-                ListFollowing = FollowSvc.GetMyFollower(OtherUserName);
-                IsFollowing = MyFollowBy.Any(x => x.FollowUserName == OtherUserName);
-            }
-            else
-            {
-                SelectedUser = DataUser;
-                ListFollowBy = MyFollowBy;
-                ListFollowing = MyFollowing;
-            }
+            await LoadData();
 
         }
 
 
     }
-
+    async Task LoadData()
+    {
+        IsLoading = true;
+        await Task.Delay(1);
+        DataUser = UserSvc.GetItemByUsername(UserName);
+        MyFollowBy = FollowSvc.GetFollowBy(UserName);
+        MyFollowing = FollowSvc.GetMyFollower(UserName);
+        if (!string.IsNullOrEmpty(OtherUserName))
+        {
+            OtherUser = UserSvc.GetItemByUsername(OtherUserName);
+            SelectedUser = OtherUser;
+            ListFollowBy = FollowSvc.GetFollowBy(OtherUserName);
+            ListFollowing = FollowSvc.GetMyFollower(OtherUserName);
+            IsFollowing = MyFollowBy.Any(x => x.FollowUserName == OtherUserName);
+        }
+        else
+        {
+            SelectedUser = DataUser;
+            ListFollowBy = MyFollowBy;
+            ListFollowing = MyFollowing;
+        }
+        IsLoading = false;
+    }
     async Task ToggleFollow()
     {
         IsFollowing = !IsFollowing;
@@ -191,4 +201,4 @@
             FollowSvc.UnFollowUser(DataUser.Id, OtherUser.Id);
         }
     }
-    }
+}

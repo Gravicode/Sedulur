@@ -1,0 +1,56 @@
+﻿@inject IJSRuntime IJS
+@inject PostService PostSvc
+@inject UserProfileService UserSvc
+
+<div class="bg-white rounded-4 overflow-hidden shadow-sm mb-4">
+    <h6 class="fw-bold text-body p-3 mb-0 border-bottom">What's happening (Trends)</h6>
+    <!-- Trending Item -->
+    @if(ListTrend!=null)
+        foreach(var trend in ListTrend)
+        {
+            <a href="@($"tags/{trend}")" class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
+                <div>
+                    <span class="text-primary">@($"#{trend}")</span>
+                </div>
+            </a>
+        }
+   
+    <!-- Show More -->
+    <a href="explore" class="text-decoration-none">
+        <div class="p-3">Show More</div>
+    </a>
+</div>
+@code {
+
+    [Parameter]
+    public string UserName { get; set; }
+
+    public List<string> ListTrend { get; set; }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    string Username;
+    UserProfile selUser;
+    bool IsLogin = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            IsLogin = true;
+            Username = user.Identity.Name;
+            selUser = UserSvc.GetItemByUsername(Username);
+            ListTrend = PostSvc.GetTrendingTags();
+            if(ListTrend!=null)
+            for(var i =0;i<ListTrend.Count;i++)
+            {
+               
+                    ListTrend[i] = ListTrend[i].Remove(0, 1);
+            }
+        }
+       
+    }
+   
+}

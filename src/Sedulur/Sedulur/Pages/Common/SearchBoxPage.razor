@@ -1,0 +1,28 @@
+﻿@inject NavigationManager NavMgr
+@inject IToastService toast
+<div class="input-group mb-4 shadow-sm rounded-4 overflow-hidden py-2 bg-white">
+    <span class="input-group-text material-icons border-0 bg-white text-primary">search</span>
+    <input @onkeyup="@Search" @bind="Keyword" type="text" class="form-control border-0 fw-light ps-1" placeholder="Search Sedulur">
+</div>
+@code {
+    public string Keyword { get; set; }
+
+    public void Search(KeyboardEventArgs e)
+    {
+        if (e.Code == "Enter" || e.Code == "NumpadEnter")
+        {
+            if (!string.IsNullOrEmpty(Keyword))
+            {
+                if (Keyword.StartsWith("#"))
+                {
+                    Keyword = Keyword.Remove(0, 1);
+                }
+                NavMgr.NavigateTo($"/explore/{Keyword}");
+            }
+            else
+            {
+                toast.ShowWarning("Please type keyword first","Info");
+            }
+        }
+    }
+}

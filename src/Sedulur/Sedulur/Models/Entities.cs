@@ -11,6 +11,15 @@ using System.Threading.Tasks;
 namespace Sedulur.Models
 {
     #region helpers model
+    public class TempFollow
+    {
+
+        public bool IsFollow
+        {
+            get; set;
+        }
+        public UserProfile User { get; set; }
+    }
     public class PeopleByJob
     {
         public string Job { get; set; }

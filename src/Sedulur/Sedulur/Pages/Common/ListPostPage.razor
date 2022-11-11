@@ -23,7 +23,7 @@
                                 <div class="d-flex align-items-center small">
                                     <p class="text-muted mb-0">@post.CreatedDate.ToString("dd MMM yyyy")</p>
                                     <div class="dropdown">
-                                        <a href="#" class="text-muted text-decoration-none material-icons ms-2 md-20 rounded-circle bg-light p-1" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">more_vert</a>
+                                        <a href="" class="text-muted text-decoration-none material-icons ms-2 md-20 rounded-circle bg-light p-1" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">more_vert</a>
                                         <ul class="dropdown-menu fs-13 dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
                                             <li><a class="dropdown-item text-muted" href="#"><span class="material-icons md-13 me-1">edit</span>Edit</a></li>
                                             <li><a class="dropdown-item text-muted" href="#"><span class="material-icons md-13 me-1">delete</span>Delete</a></li>
@@ -38,7 +38,7 @@
 
                                 @if (!string.IsNullOrEmpty(post.ImageUrls))
                                 {
-                                    <a href="#" class="text-decoration-none" @onclick="(()=>OpenComment(post))">
+                                    <a href="" @onclick:preventDefault class="text-decoration-none" @onclick="(()=>OpenComment(post))">
                                         <img src="@post.ImageUrls" class="img-fluid rounded mb-3" alt="post-img">
                                     </a>
                                 }
@@ -49,21 +49,21 @@
                                         @{
                                             var like = LikeList[post.Id];
                                         }
-                                        <a href="#" @onclick="(() => TogglePostLike(post, like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                            <a href="" @onclick:preventDefault @onclick="(() => TogglePostLike(post, like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
                                     </div>
                                 }
                                 else
                                 {
-                                    <a href="#"  class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">thumb_up_off_alt</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                    <a href="" @onclick:preventDefault class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">thumb_up_off_alt</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
                                 }
                                 <div>
-                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">chat_bubble_outline</span><span>@(post.PostComments == null ? 0 : post.PostComments.Count())</span></a>
+                                        <a href="" @onclick:preventDefault class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">chat_bubble_outline</span><span>@(post.PostComments == null ? 0 : post.PostComments.Count())</span></a>
                                 </div>
                                 <div>
-                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(post.Reposts == null ? 0 : post.Reposts.Count())</span></a>
+                                        <a href="" @onclick:preventDefault class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(post.Reposts == null ? 0 : post.Reposts.Count())</span></a>
                                 </div>
                                 <div>
-                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
+                                        <a href="" @onclick:preventDefault class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
                                 </div>
                             </div>
                                 <div class="d-flex align-items-center mb-3" @onclick="(()=>OpenComment(post))">
@@ -77,20 +77,20 @@
                                         {
 
                                             <div class="d-flex mb-2">
-                                                <a href="#" class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
+                                                <a href="" @onclick:preventDefault class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
                                                     <img src="@( string.IsNullOrEmpty( comment.User?.PicUrl) ? "img/img-user.jpg":comment.User?.PicUrl)" class="img-fluid rounded-circle" alt="commenters-img">
                                                 </a>
                                                 <div class="ms-2 small">
-                                                    <a href="#" class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
+                                                    <a href="" @onclick:preventDefault class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
                                                         <div class="bg-light px-3 py-2 rounded-4 mb-1 chat-text">
                                                             <p class="fw-500 mb-0">@comment.User?.FullName</p>
                                                             <span class="text-muted">@comment.Comment</span>
                                                         </div>
                                                     </a>
                                                     <div class="d-flex align-items-center ms-2">
-                                                        <a href="#" class="small text-muted text-decoration-none">Like</a>
+                                                        <a href="" @onclick:preventDefault class="small text-muted text-decoration-none">Like</a>
                                                         <span class="fs-3 text-muted material-icons mx-1">circle</span>
-                                                        <a href="#" class="small text-muted text-decoration-none">Reply</a>
+                                                        <a href="" @onclick:preventDefault class="small text-muted text-decoration-none">Reply</a>
                                                         <span class="fs-3 text-muted material-icons mx-1">circle</span>
                                                         <span class="small text-muted">@(DateHelper.GetElapsedTime(comment.CreatedDate))</span>
                                                     </div>
@@ -109,6 +109,9 @@
 </div>
 @code {
     public enum FeedTypes { Timeline, OnlyMe, Liked, Repost, Mention, Trending }
+
+    [Parameter]
+    public string Keyword { get; set; }
 
     [Parameter]
     public FeedTypes FeedType { get; set; } = FeedTypes.Timeline;
@@ -262,9 +265,12 @@
                     }
                 }
                 break;
-                case FeedTypes.Trending:
+            case FeedTypes.Trending:
                 {
-                    ListPost = PostSvc.GetTrendingPosts();
+                    if (!string.IsNullOrEmpty(Keyword))
+                        ListPost = PostSvc.FindByKeyword(Keyword);
+                    else
+                        ListPost = PostSvc.GetTrendingPosts();
                     if (!string.IsNullOrEmpty(Username))
                     {
                         LikeList.Clear();
