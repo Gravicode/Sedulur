@@ -1,5 +1,12 @@
 ﻿@page "/explore"
+@page "/explore/{Keyword}"
+
+@inject IJSRuntime IJS
+@inject PostService PostSvc
+@inject UserProfileService UserSvc
 @layout MainLayoutCustom
+<PageTitle>Explore Sedulur - berbagi informasi untuk kebaikan</PageTitle>
+
 <main class="col col-xl-6 order-xl-2 col-lg-12 order-lg-1 col-md-12 col-sm-12 col-12">
     <div class="main-content">
         <div class="d-flex align-items-center mb-3">
@@ -7,114 +14,137 @@
             <p class="ms-2 mb-0 fw-bold text-body fs-6">Explore</p>
         </div>
         <div class="bg-white rounded-4 overflow-hidden shadow-sm mb-4 mb-lg-0">
-            <!-- Trending Item -->
-            <a href="tags" class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                        <small>Celebrity</small><span class="mx-1 material-icons md-3">circle</span><small>Live</small>
-                    </div>
-                    <p class="fw-bold mb-0 pe-3">Happy birthday, Osahan 🎂</p>
-                    <small class="text-muted">Trending with</small><br />
-                    <span class="text-primary">#HappyBirthdayJohnSmith</span>
-                </div>
-                <img src="img/rmate4.jpg" class="img-fluid rounded-4 ms-auto" alt="profle-img">
-            </a>
-            <!-- Trending Item -->
-            <a href="tags" class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                    </div>
-                    <p class="fw-bold mb-0 pe-3">#SelectricsM12</p>
-                    <small class="text-muted">Buy now with exclusive offers</small><br />
-                    <small class="text-muted d-flex align-items-center"><span class="material-icons me-1 small">open_in_new</span>Promoted by Selectrics World</small>
-                </div>
-            </a>
-            <!-- Trending Item -->
-            <div class="p-3 border-bottom d-flex">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                        <small>Trending in India</small>
-                    </div>
-                    <p class="fw-bold mb-0 pe-3 text-dark">#ME11Lite</p>
-                    <small class="text-muted">Discere constituto vituperatoribus ad vis, in pri atqui animal assueverit</small><br />
-                    <small class="text-muted">52.8k Tweets</small>
-                </div>
-                <div class="dropdown ms-auto">
-                    <a href="#" class="text-muted text-decoration-none material-icons ms-2 md-20 rounded-circle bg-light p-1" id="dropdownMenuButton2" data-bs-toggle="dropdown" aria-expanded="false">more_vert</a>
-                    <ul class="dropdown-menu fs-13 dropdown-menu-end" aria-labelledby="dropdownMenuButton2">
-                        <li><a class="dropdown-item text-muted" href="#"><span class="material-icons md-13 me-1">sentiment_very_dissatisfied</span>Not interested in this</a></li>
-                        <li><a class="dropdown-item text-muted" href="#"><span class="material-icons md-13 me-1">sentiment_very_dissatisfied</span>This trend is harmful or spammy</a></li>
-                    </ul>
-                </div>
-            </div>
-            <!-- Trending Item -->
-            <a href="tags" class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                        <small>Design</small><span class="mx-1 material-icons md-3">circle</span><small>Live</small>
-                    </div>
-                    <p class="fw-bold mb-0 pe-3">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                    <small class="text-muted">Trending with</small><br />
-                    <span class="text-primary">#topdesign</span>
-                </div>
-                <img src="img/trend1.jpg" class="img-fluid rounded-4 ms-auto" alt="trending-img">
-            </a>
-            <!-- Trending Item -->
-            <a href="tags" class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                        <small>Celebrity</small><span class="mx-1 material-icons md-3">circle</span><small>Live</small>
-                    </div>
-                    <p class="fw-bold mb-0 pe-3">Happy birthday, Osahan Smith 🎂</p>
-                    <small class="text-muted">Trending with</small><br />
-                    <span class="text-primary">#HappyBirthdayJohnSmith</span>
-                </div>
-                <img src="img/rmate5.jpg" class="img-fluid rounded-4 ms-auto" alt="profile-img">
-            </a>
-            <!-- Trending Item -->
-            <a href="tags" class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                    </div>
-                    <p class="fw-bold mb-0 pe-3">#SelectricsM12</p>
-                    <small class="text-muted">Buy now with exclusive offers</small><br />
-                    <small class="text-muted d-flex align-items-center"><span class="material-icons me-1 small">open_in_new</span>Promoted by Selectrics World</small>
-                </div>
-            </a>
-            <!-- Trending Item -->
-            <div class="p-3 border-bottom d-flex">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                        <small>Trending in India</small>
-                    </div>
-                    <p class="fw-bold mb-0 pe-3 text-dark">#ME11Lite</p>
-                    <small class="text-muted">Buy now with exclusive offers</small><br />
-                    <small class="text-muted">52.8k Tweets</small>
-                </div>
-                <div class="dropdown ms-auto">
-                    <a href="#" class="text-muted text-decoration-none material-icons ms-2 md-20 rounded-circle bg-light p-1" id="dropdownMenuButton1" data-bs-toggle="dropdown" aria-expanded="false">more_vert</a>
-                    <ul class="dropdown-menu fs-13 dropdown-menu-end" aria-labelledby="dropdownMenuButton1">
-                        <li><a class="dropdown-item text-muted" href="#"><span class="material-icons md-13 me-1">sentiment_very_dissatisfied</span>Not interested in this</a></li>
-                        <li><a class="dropdown-item text-muted" href="#"><span class="material-icons md-13 me-1">sentiment_very_dissatisfied</span>This trend is harmful or spammy</a></li>
-                    </ul>
-                </div>
-            </div>
-            <!-- Trending Item -->
-            <a href="tags" class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
-                <div>
-                    <div class="text-muted fw-light d-flex align-items-center">
-                        <small>Design</small><span class="mx-1 material-icons md-3">circle</span><small>Live</small>
-                    </div>
-                    <p class="fw-bold mb-0 pe-3">Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
-                    <small class="text-muted">Trending with</small><br />
-                    <span class="text-primary">#topdesign</span>
-                </div>
-                <img src="img/rmate2.jpg" class="img-fluid rounded-4 ms-auto" alt="profile-img">
-            </a>
+            @if (ListPost != null)
+                @foreach (var post in ListPost)
+                {
+                    <!-- Trending Item -->
+                    <a href='@($"profile/{post.User.Username}")' class="p-3 border-bottom d-flex align-items-center text-dark text-decoration-none">
+                        <div>
+                            <div class="text-muted fw-light d-flex align-items-center">
+                                <small>@post.User.Pekerjaan</small>
+                            </div>
+                            <p class="fw-bold mb-0 pe-3">@((MarkupString)post.Message.ParseURL().ParseUsername().ParseHashtag())</p>
+                            @if (!string.IsNullOrEmpty(post.Hashtags))
+                            {
+                                <small class="text-muted">Trending with</small>
+
+                                <br />
+                                <span class="text-primary">@post.Hashtags</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(post.ImageUrls))
+                        {
+                            <img src="@(post.ImageUrls)" class="img-fluid rounded-4 ms-auto" alt="profle-img">
+                        }
+                        
+                    </a>
+                }
+            
         </div>
     </div>
 </main>
 
 @code {
+    [Parameter]
+    public string Keyword { get; set; }
 
+
+    [CascadingParameter]
+    public MainLayoutCustom Layout { get; set; }
+    [Parameter]
+    public string UserName { get; set; }
+
+    public List<Post> ListPost { get; set; }
+    /*
+    Dictionary<long, bool> LikeList = new();
+
+    async Task OpenComment(Post post)
+    {
+    Layout.CurrentPost = post;
+    Layout.NewComment = new();
+    //data-bs-toggle="modal" data-bs-target="#commentModal"
+    await IJS.InvokeVoidAsync("ShowModal", "commentModal");
+
+        //Layout.ThisCommentPage.Refresh();
+
+
+        }
+
+        async Task TogglePostLike(Post post, bool Like)
+        {
+        Like = !Like;
+        if (Like)
+        {
+        PostSvc.LikePost(selUser.Id, selUser.Username, post.Id);
+        }
+        else
+        {
+        PostSvc.UnLikePost(selUser.Id, post.Id);
+    }
+    LikeList[post.Id] = Like;
+    }
+
+    public void Refresh()
+    {
+    LoadData();
+    StateHasChanged();
+    }
+    */
+    void LoadData()
+    {
+
+        ListPost = PostSvc.FindByKeyword(Keyword);
+        OldKeyword = Keyword;
+        /*
+        if (!string.IsNullOrEmpty(Username))
+            {
+            LikeList.Clear();
+            ListPost.ForEach(x =>
+                {
+                if (x.PostLikes != null)
+                {
+                LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
+                }
+                else
+                {
+                LikeList.Add(x.Id, false);
+    }
+        });
+
+    }
+    */
+    }
+
+    [CascadingParameter]
+    private Task<AuthenticationState> authenticationStateTask { get; set; }
+    string Username;
+    UserProfile selUser;
+    bool IsLogin = false;
+    string OldKeyword;
+    protected override async Task OnInitializedAsync()
+    {
+        var user = (await authenticationStateTask).User;
+
+        if (user.Identity.IsAuthenticated)
+        {
+            IsLogin = true;
+            Username = user.Identity.Name;
+            selUser = UserSvc.GetItemByUsername(Username);
+
+        }
+        if (string.IsNullOrEmpty(Keyword))
+        {
+            var trending = PostSvc.GetTrendingTags();
+            var trendstr = string.Join(' ', trending);
+            Keyword = trendstr;
+        }
+        LoadData();
+    }
+    protected override void OnParametersSet()
+    {
+        if (Keyword != OldKeyword)
+        {
+            LoadData();
+        }
+    }
 }

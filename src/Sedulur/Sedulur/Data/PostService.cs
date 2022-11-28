@@ -64,11 +64,34 @@ namespace Sedulur.Data
         }
         public List<Post> FindByKeyword(string Keyword)
         {
-            var data = from x in db.Posts
-                       where x.Message.Contains(Keyword) 
-                       select x;
-            return data.ToList();
+            var keywords = Keyword.Split(' ');
+            if (keywords.Length > 0)
+            {
+                var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User).AsEnumerable()
+                           where keywords.Any((keystr)=> x.Message.Contains(keystr))
+                           //x.Message.Contains(Keyword)
+                           select x;
+                return data.ToList();
+            }
+            return default;
+           
         }
+
+        public List<string> GetTrendingTags(int Take=10)
+        {
+            var listTrend = db.Trendings.GroupBy(info => info.Hashtag)
+                       .Select(group => new
+                       {
+                           hashtag = group.Key,
+                           count = group.Count(),
+                       }
+           ).AsEnumerable()
+                       .OrderByDescending(x => x.count).Take(10).ToList();
+            var hashtags = new List<string>();
+            listTrend.ForEach(x => hashtags.Add(x.hashtag));
+            return hashtags.Take(Take).ToList();
+        }
+
         public List<Post> GetTrendingPosts(int Number = 25)
         {
           
