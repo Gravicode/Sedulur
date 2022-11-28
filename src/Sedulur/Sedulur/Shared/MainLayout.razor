@@ -58,12 +58,11 @@
 
     [Parameter]
     public Post NewPost { get; set; } 
-    
+
     [Parameter]
     public PostComment NewComment { get; set; }
 
-   
-
+    
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     async Task Keluar()

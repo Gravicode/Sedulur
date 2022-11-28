@@ -20,10 +20,10 @@
                 <!-- Post Tab -->
                 <AuthorizeView>
                     <Authorized>
-                        <div class="input-group mb-4 shadow-sm rounded-4 overflow-hidden py-2 bg-white" @onclick="OpenNewPost">
+                        <div class="input-group mb-4 shadow-sm rounded-4 overflow-hidden py-2 bg-white" >
                             <span class="input-group-text material-icons border-0 bg-white text-primary">account_circle</span>
                             <input type="text" class="form-control border-0 fw-light ps-1" placeholder="What's on your mind.">
-                            <a href="#" class="text-decoration-none input-group-text bg-white border-0 material-icons text-primary">add_circle</a>
+                            <a href="" @onclick:preventDefault @onclick:stopPropagation @onclick="OpenNewPost" class="text-decoration-none input-group-text bg-white border-0 material-icons text-primary">add_circle</a>
                         </div>
                     </Authorized>
                 </AuthorizeView>
@@ -47,10 +47,10 @@
                 <!-- Post Tab -->
                 <AuthorizeView>
                     <Authorized>
-                        <div class="input-group shadow-sm mb-3 rounded-4 overflow-hidden py-2 bg-white" @onclick="OpenNewPost">
+                        <div class="input-group shadow-sm mb-3 rounded-4 overflow-hidden py-2 bg-white">
                             <span class="input-group-text material-icons border-0 bg-white text-primary">account_circle</span>
                             <input type="text" class="form-control border-0 fw-light ps-1" placeholder="What's on your mind.">
-                            <a href="#" class="text-decoration-none input-group-text bg-white border-0 material-icons text-primary">add_circle</a>
+                            <a href="" @onclick:preventDefault @onclick:stopPropagation @onclick="OpenNewPost" class="text-decoration-none input-group-text bg-white border-0 material-icons text-primary">add_circle</a>
                         </div>
                     </Authorized>
                 </AuthorizeView>

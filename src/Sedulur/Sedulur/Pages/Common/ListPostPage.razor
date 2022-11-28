@@ -34,42 +34,47 @@
                                 </div>
                             </div>
                             <div class="my-2">
-                                <p class="mb-3 text-info">@((MarkupString)post.Message.ParseURL().ParseUsername().ParseHashtag())</p>
+                                <a style="color: inherit;text-decoration: inherit;" href="#" @onclick="(()=>OpenComment(post))">
+                                    <p class="mb-3 text-info">@((MarkupString)post.Message.ParseURL().ParseUsername().ParseHashtag())</p>
+                                </a>
+                               
 
                                 @if (!string.IsNullOrEmpty(post.ImageUrls))
                                 {
-                                    <a href="#" class="text-decoration-none" @onclick="(()=>OpenComment(post))">
+                                    <a href="" class="text-decoration-none" @onclick="(()=>OpenComment(post))">
                                         <img src="@post.ImageUrls" class="img-fluid rounded mb-3" alt="post-img">
                                     </a>
                                 }
-                            <div class="d-flex align-items-center justify-content-between mb-2">
-                                @if (IsLogin)
-                                {
+                                <div class="d-flex align-items-center justify-content-between mb-2">
+                                    @if (IsLogin)
+                                    {
+                                        <div>
+                                            @{
+                                                var like = LikeList[post.Id];
+                                            }
+                                            <a href="" @onclick:preventDefault @onclick:stopPropagation @onclick="(() => TogglePostLike(post, like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                        </div>
+                                    }
+                                    else
+                                    {
+                                        <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">thumb_up_off_alt</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                    }
                                     <div>
-                                        @{
-                                            var like = LikeList[post.Id];
-                                        }
-                                        <a href="#" @onclick="(() => TogglePostLike(post, like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                        <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">chat_bubble_outline</span><span>@(post.PostComments == null ? 0 : post.PostComments.Count())</span></a>
                                     </div>
-                                }
-                                else
-                                {
-                                    <a href="#"  class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">thumb_up_off_alt</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
-                                }
-                                <div>
-                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">chat_bubble_outline</span><span>@(post.PostComments == null ? 0 : post.PostComments.Count())</span></a>
+                                    <div>
+                                        <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(post.Reposts == null ? 0 : post.Reposts.Count())</span></a>
+                                    </div>
+                                    <div>
+                                        <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
+                                    </div>
                                 </div>
-                                <div>
-                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(post.Reposts == null ? 0 : post.Reposts.Count())</span></a>
-                                </div>
-                                <div>
-                                    <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
-                                </div>
-                            </div>
-                                <div class="d-flex align-items-center mb-3" @onclick="(()=>OpenComment(post))">
-                                    <span class="material-icons bg-white border-0 text-primary pe-2 md-36">account_circle</span>
-                                    <input type="text" class="form-control form-control-sm rounded-3 fw-light" placeholder="Write Your comment">
-                                </div>
+                                <a href="#" @onclick="(()=>OpenComment(post))">
+                                    <div class="d-flex align-items-center mb-3">
+                                        <span class="material-icons bg-white border-0 text-primary pe-2 md-36">account_circle</span>
+                                        <input type="text" class="form-control form-control-sm rounded-3 fw-light" placeholder="Write Your comment">
+                                    </div>
+                                </a>
                                 <div class="comments">
                                     @if (post.PostComments != null)
                                     {
@@ -77,11 +82,11 @@
                                         {
 
                                             <div class="d-flex mb-2">
-                                                <a href="#" class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
+                                                <a href="" class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
                                                     <img src="@( string.IsNullOrEmpty( comment.User?.PicUrl) ? "img/img-user.jpg":comment.User?.PicUrl)" class="img-fluid rounded-circle" alt="commenters-img">
                                                 </a>
                                                 <div class="ms-2 small">
-                                                    <a href="#" class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
+                                                    <a href="" class="text-dark text-decoration-none" @onclick="(()=>OpenComment(post))">
                                                         <div class="bg-light px-3 py-2 rounded-4 mb-1 chat-text">
                                                             <p class="fw-500 mb-0">@comment.User?.FullName</p>
                                                             <span class="text-muted">@comment.Comment</span>
@@ -127,7 +132,7 @@
         Layout.NewComment = new();
         //data-bs-toggle="modal" data-bs-target="#commentModal"
         await IJS.InvokeVoidAsync("ShowModal", "commentModal");
-
+        //await Layout.RefreshComment();
         //Layout.ThisCommentPage.Refresh();
 
 
@@ -262,7 +267,7 @@
                     }
                 }
                 break;
-                case FeedTypes.Trending:
+            case FeedTypes.Trending:
                 {
                     ListPost = PostSvc.GetTrendingPosts();
                     if (!string.IsNullOrEmpty(Username))
@@ -308,4 +313,4 @@
 
         LoadData();
     }
-    }
+}

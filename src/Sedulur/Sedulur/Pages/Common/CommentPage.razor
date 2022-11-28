@@ -12,13 +12,14 @@
 @*@implements IDisposable*@
 <div class="modal fade" id="commentModal" tabindex="-1" aria-labelledby="exampleModalLabel2" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered">
-        @if (CurrentPost != null)
-        {
-            <div class="modal-content rounded-4 overflow-hidden border-0">
-                <div class="modal-header d-none">
-                    <h5 class="modal-title" id="exampleModalLabel2">@CurrentPost.Message</h5>
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
+
+        <div class="modal-content rounded-4 overflow-hidden border-0">
+            <div class="modal-header d-none">
+                <h5 class="modal-title" id="exampleModalLabel2">@CurrentPost?.Message</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            @if (CurrentPost != null)
+            {
                 <div class="modal-body p-0">
                     <div class="row m-0">
                         <div class="col-sm-7 px-0 m-sm-none">
@@ -79,7 +80,11 @@
                                                     <p class="ms-2 material-icons bg-primary p-0 md-16 fw-bold text-white rounded-circle ov-icon mb-0">done</p>
                                                 }
                                             </div>
-                                            <p class="text-muted mb-0 small">@($"@{selUser.Username}")</p>
+                                            <p class="text-muted mb-0 small">
+                                                @(
+                                                    $"@{selUser.Username}"
+                                                    )
+                                            </p>
                                         </a>
                                         <div class="small dropdown">
                                             <a href="#" class="text-muted text-decoration-none material-icons ms-2 md-" data-bs-dismiss="modal">close</a>
@@ -87,6 +92,9 @@
                                     </div>
                                 </div>
                                 <div class="comments p-3">
+                                    <div class="d-flex mb-2">
+                                    <h6 class="modal-title" id="xxx">@CurrentPost?.Message</h6>
+                                    </div>
                                     @if (CurrentPost.PostComments != null)
                                     {
                                         @foreach (var comment in CurrentPost.PostComments)
@@ -103,7 +111,11 @@
                                                         <span class="fs-3 text-muted material-icons mx-1">circle</span>
                                                         <a href="#" class="small text-muted text-decoration-none">Reply</a>
                                                         <span class="fs-3 text-muted material-icons mx-1">circle</span>
-                                                        <span class="small text-muted">@(DateHelper.GetElapsedTime(comment.CreatedDate))</span>
+                                                        <span class="small text-muted">
+                                                            @(
+                                                                DateHelper.GetElapsedTime(comment.CreatedDate)
+                                                                )
+                                                        </span>
                                                     </div>
                                                 </div>
                                             </div>
@@ -114,12 +126,28 @@
                                 </div>
                                 <div class="border-top p-3 mt-auto">
                                     <div class="d-flex align-items-center justify-content-between mb-2">
-                                       
+
                                         <div>
-                                            <a href="#" @onclick="(()=>TogglePostLike(CurrentPost,PostLike))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(PostLike ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(CurrentPost.PostLikes == null ? 0 : CurrentPost.PostLikes.Count)</span></a>
+                                            <a href="#" @onclick="(()=>TogglePostLike(CurrentPost,PostLike))" class="text-muted text-decoration-none d-flex align-items-start fw-light">
+                                                <span class="material-icons md-20 me-2">
+                                                    @(
+                                                        PostLike ? "thumb_up_on" : "thumb_up_off_alt"
+                                                        )
+                                                </span><span>
+                                                    @(
+                                                        CurrentPost.PostLikes == null ? 0 : CurrentPost.PostLikes.Count
+                                                        )
+                                                </span>
+                                            </a>
                                         </div>
                                         <div>
-                                            <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">repeat</span><span>@(CurrentPost.Reposts == null ? 0 : CurrentPost.Reposts.Count)</span></a>
+                                            <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light">
+                                                <span class="material-icons md-20 me-2">repeat</span><span>
+                                                    @(
+                                                        CurrentPost.Reposts == null ? 0 : CurrentPost.Reposts.Count
+                                                        )
+                                                </span>
+                                            </a>
                                         </div>
                                         <div>
                                             <a href="#" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-18 me-2">share</span><span>Share</span></a>
@@ -137,10 +165,11 @@
                         </div>
                     </div>
                 </div>
-                <div class="modal-footer d-none">
-                </div>
+            }
+            <div class="modal-footer d-none">
             </div>
-        }
+        </div>
+
     </div>
 </div>
 @code {
@@ -171,7 +200,7 @@
     [CascadingParameter]
     private Task<AuthenticationState> authenticationStateTask { get; set; }
     [Parameter]
-    public bool PostLike{ set; get; }
+    public bool PostLike { set; get; }
 
     string Username;
     protected override void OnInitialized()
@@ -198,8 +227,8 @@
         else
         {
             PostSvc.UnLikePost(selUser.Id, post.Id);
-            var removed = post.PostLikes.Where(x=>x.LikedByUserId == selUser.Id && x.PostId == post.Id).FirstOrDefault();
-            if(removed!=null)
+            var removed = post.PostLikes.Where(x => x.LikedByUserId == selUser.Id && x.PostId == post.Id).FirstOrDefault();
+            if (removed != null)
                 CurrentPost.PostLikes.Remove(removed);
         }
         PostLike = Like;

@@ -10,6 +10,11 @@ using Microsoft.AspNetCore.HttpOverrides;
 using PdfSharp.Charting;
 using System.Net;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
+using Sedulur.Models;
+using Microsoft.AspNetCore.DataProtection;
+using OneOf.Types;
+using Microsoft.Azure.Storage.Shared.Protocol;
+using Sedulur.Helpers;
 
 var builder = WebApplication.CreateBuilder(args);
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -97,6 +102,18 @@ SmsService.TokenKey = Configuration["SmsSettings:TokenKey"];
 
 AppConstants.DefaultPass = Configuration["App:DefaultPass"];
 
+AppConstants.StorageEndpoint = Configuration["Storage:Endpoint"];
+AppConstants.StorageAccess = Configuration["Storage:Access"];
+AppConstants.StorageSecret = Configuration["Storage:Secret"];
+AppConstants.StorageBucket = Configuration["Storage:Bucket"];
+var setting = new StorageSetting() { };
+setting.Bucket = AppConstants.StorageBucket;
+setting.SecretKey = AppConstants.StorageSecret;
+setting.AccessKey = AppConstants.StorageAccess;
+
+builder.Services.AddSingleton(setting);
+builder.Services.AddTransient<StorageObjectService>();
+
 builder.Services.AddSignalR(hubOptions =>
 {
     hubOptions.MaximumReceiveMessageSize = 128 * 1024; // 1MB
@@ -154,5 +171,22 @@ app.MapFallbackToPage("/_Host");
 var db = new SedulurDB();
 db.Database.EnsureCreated();
 
+/*
+var client = new HttpClient();
+var storagesvc = new StorageObjectService(setting);
+//var datablob = db.Posts.Where(x => !string.IsNullOrEmpty(x.ImageUrls)).Select(x => x.ImageUrls);
+var datablob = db.UserProfiles.Where(x => !string.IsNullOrEmpty(x.PicUrl)).Select(x => x.PicUrl);
+foreach(var filestr in datablob)
+{
+    var url = "https://sedulur.web.id" + filestr.Trim();
+    var filebyte = await client.GetByteArrayAsync(url);
+    var keystr = filestr.Replace("/api/dms/getfile?filename=", "");
+    //File.WriteAllBytes(keystr, filebyte);
+
+    var mime = MimeTypeHelper.GetMimeType(Path.GetExtension(keystr));
+    var success = await storagesvc.InsertData(keystr, mime, filebyte);
+    Console.WriteLine($"upload {keystr}:"+success);
+}
+*/
 
 app.Run();

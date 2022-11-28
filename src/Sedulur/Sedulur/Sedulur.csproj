@@ -55,6 +55,7 @@
 	</ItemGroup>
 
 	<ItemGroup>
+		<ProjectReference Include="..\IDCH.Storage\IDCH.Storage.csproj" />
 		<ProjectReference Include="..\Sedulur.Tools\Sedulur.Tools.csproj" />
 	</ItemGroup>
 

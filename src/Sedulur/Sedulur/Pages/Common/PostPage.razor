@@ -25,15 +25,15 @@
             </div>
             <div class="modal-footer justify-content-start px-1 py-1 bg-white shadow-sm rounded-5">
                 <div class="rounded-4 m-0 px-3 py-2 d-flex align-items-center justify-content-between w-75">
-                    <a href="#" @onclick="(()=>PrepareUpload(UploadTypes.Doc))" for="fileInput1" class="text-muted text-decoration-none material-icons">insert_link</a>
-                    <a href="#" @onclick="(()=>PrepareUpload(UploadTypes.Image))" for="fileInput1" class="text-muted text-decoration-none material-icons">image</a>
-                    <a href="#" @onclick="(()=>PrepareUpload(UploadTypes.Video))" for="fileInput1" class="text-muted text-decoration-none material-icons">smart_display</a>
+                    <a href="" @onclick:preventDefault @onclick:stopPropagation @onclick="(()=>PrepareUpload(UploadTypes.Doc))" for="fileInput1" class="text-muted text-decoration-none material-icons">insert_link</a>
+                    <a href="" @onclick:preventDefault @onclick:stopPropagation @onclick="(()=>PrepareUpload(UploadTypes.Image))" for="fileInput1" class="text-muted text-decoration-none material-icons">image</a>
+                    <a href="" @onclick:preventDefault @onclick:stopPropagation @onclick="(()=>PrepareUpload(UploadTypes.Video))" for="fileInput1" class="text-muted text-decoration-none material-icons">smart_display</a>
                     <span class="text-muted">0/500</span>
-                    <InputFile @ref="fileUpload" id="fileInput1" OnChange="UploadFiles" hidden />
+                    <InputFile @ref="fileUpload" id="fileInput1" accept=".jpg,.png,.jpeg,.gif" OnChange="UploadFiles" hidden />
                    
                 </div>
                 <div class="ms-auto m-0">
-                    <a href="#" @onclick="PostMessage" class="btn btn-primary rounded-5 fw-bold px-3 py-2 fs-6 mb-0 d-flex align-items-center"><span class="material-icons me-2 md-16">send</span>Post</a>
+                    <a href="" @onclick:preventDefault @onclick:stopPropagation @onclick="PostMessage" class="btn btn-primary rounded-5 fw-bold px-3 py-2 fs-6 mb-0 d-flex align-items-center"><span class="material-icons me-2 md-16">send</span>Post</a>
                 </div>
             </div>
         </div>
@@ -81,7 +81,11 @@
             ErrorMsg += "Tolong di isi pesan. ";
 
         }
+        if (string.IsNullOrEmpty(NewPost.ImageUrls))
+        {
+            ErrorMsg += "Tolong pilih gambar. ";
 
+        }
         if (ErrorMsg.Length > 0)
         {
             toastService.ShowWarning(ErrorMsg, "Perhatian");

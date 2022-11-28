@@ -35,6 +35,10 @@ body {
     font-family: 'Gilroy', sans-serif;
 }
 
+.link-clear a 
+{
+    all: unset;
+}
 
 /* FAQ */
 .faq-page .accordion-button {

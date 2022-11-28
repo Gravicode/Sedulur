@@ -15,6 +15,11 @@ namespace Sedulur.Data
         public const string FACE_ENDPOINT = "https://southeastasia.api.cognitive.microsoft.com/";
 
 
+        public static string StorageEndpoint = "";
+        public static string StorageAccess = "";
+        public static string StorageSecret = "";
+        public static string StorageBucket = "";
+
         public static string ProxyIP = "";
         public static string SQLConn = "";
         public static string EmailAccount = "sedulur.app@gmail.com";
