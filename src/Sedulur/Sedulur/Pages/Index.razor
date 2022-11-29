@@ -110,6 +110,8 @@
     }
     async Task OpenNewPost()
     {
+        
+
         //data-bs-toggle="modal" data-bs-target="#postModal"
         NewPost.Message = string.Empty;
         NewPost.Id = 0;
@@ -117,7 +119,7 @@
         NewPost.DocUrls = string.Empty;
         NewPost.VideoUrls = string.Empty;
 
-        IJS.InvokeVoidAsync("ShowModal", "postModal");
+        await IJS.InvokeVoidAsync("ShowModal", "postModal");
     }
 
 

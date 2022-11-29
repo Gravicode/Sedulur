@@ -1,6 +1,7 @@
 ﻿@inject PostService PostSvc
 @inject IJSRuntime IJS
 @inject UserProfileService UserSvc
+@inject IToastService toastService
 <div class="pt-4 feeds">
     @if (ListPost != null)
         @foreach (var post in ListPost)
@@ -131,6 +132,11 @@
 
     async Task OpenComment(Post post)
     {
+        if (!IsLogin)
+        {
+            toastService.ShowWarning("Silakan login terlebih dahulu untuk komentar");
+            return;
+        }
         Layout.CurrentPost = post;
         Layout.NewComment = new();
         //data-bs-toggle="modal" data-bs-target="#commentModal"
