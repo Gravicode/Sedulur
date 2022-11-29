@@ -11,6 +11,12 @@ using System.Threading.Tasks;
 namespace Sedulur.Models
 {
     #region helpers model
+
+    public class LoginCls
+    {
+        public string Username { get; set; }
+        public string Password { get; set; }
+    }
     public class TempFollow
     {
 

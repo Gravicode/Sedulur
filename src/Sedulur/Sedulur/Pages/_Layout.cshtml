@@ -74,6 +74,35 @@
     <!-- Page level custom scripts -->
 
     <script>
+        function LogIn(username,password){
+            var origin = window.location.origin;
+            
+            $.post(origin+"/login", { Username: username, Password: password })
+              .done(function( result ) {
+                   console.log(result);
+                   return result;
+              });
+           
+          /*
+            let text = '{ "Username":"'+username+'" , "Password":"'+password+'" }';
+            const obj = JSON.parse(text);
+         */
+          $.ajax({
+                method: "get",
+                type: "get",
+                contentType: "application/json",
+                url: "/login?username="+username+"&password="+password,                
+                //data: obj,
+                success: function (data, status, xhr) {
+                        console.log(data);
+                        return data;
+                },
+                error: function (xhr) {
+                    console.log("error", xhr.responseText); //,xhr.statusText, 
+                }
+            });
+        }
+
         function OpenFileUpload(uploadid) {
            
             $('#'+uploadid+':hidden').trigger('click');

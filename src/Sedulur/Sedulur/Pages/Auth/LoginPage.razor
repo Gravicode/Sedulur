@@ -3,9 +3,11 @@
 @using System.Web;
 
 @using Microsoft.AspNetCore.WebUtilities
+@using Sedulur.Tools;
 @inject IJSRuntime jsRuntime
 @inject IToastService toastService
 @inject NavigationManager NavMgr
+@inject SedulurDB db
 <AuthorizeView>
     <Authorized>
        
@@ -46,7 +48,7 @@
                                     <div class="row mx-0 mb-1">
                                         <div class="col-12 p-1">
                                             <div class="form-floating d-flex align-items-end">
-                                                <div class="alert alert-warning">
+                                                <div class="form-control rounded-5 alert alert-warning" style="text-align:center">
                                                     username/password salah atau tidak terdaftar
                                                 </div>
                                             </div>
@@ -74,6 +76,7 @@
 
 
 @code {
+    HttpClient client;
     bool showError = false;
     string Username = "";
     string Password = "";
@@ -104,6 +107,8 @@
     }
     async Task LoginNow()
     {
+        showError = false;
+        if (client == null) client = new();
         var ErrMsg = "";
         if (string.IsNullOrEmpty(Username))
         {
@@ -119,13 +124,46 @@
         }
         else
         {
-            string logUrl = $"/login?paramUsername={encode(Username)}&paramPassword={encode(Password)}";
-            await jsRuntime.InvokeAsync<object>("OpenUrl", logUrl);
+
+            bool isAuthenticate = false;
+            var usr = db.UserProfiles.Where(x => x.Username == Username).FirstOrDefault();
+            if (usr != null)
+            {
+                var enc = new Encryption();
+                var pass = enc.Decrypt(usr.Password);
+                isAuthenticate = pass == Password;
+            }
+            if (isAuthenticate)
+            {
+                await jsRuntime.InvokeVoidAsync("CloseModal", "signModal");
+                var hostUrl = NavMgr.BaseUri;
+                //var response = await client.PostAsJsonAsync($"{hostUrl}login", new LoginModel { Username = Username, Password = Password });
+                //var res = response.IsSuccessStatusCode;
+                string logUrl = $"/login?paramUsername={encode(Username)}&paramPassword={encode(Password)}";
+                await jsRuntime.InvokeAsync<object>("OpenUrl", logUrl);
+            }
+            else
+            {
+                showError = true;
+                toastService.ShowWarning("username/password salah atau tidak terdaftar", "Perhatian");                
+            }
+            /*
+            var hasil = await jsRuntime.InvokeAsync<OutputCls>("LogIn", Username,Password);
+            
+            if(hasil.IsSucceed)
+            {
+                await jsRuntime.InvokeVoidAsync("CloseModal", "signModal");
+            }
+            else
+            {
+                toastService.ShowWarning("username/password salah atau tidak terdaftar", "Perhatian");
+            }*/
         }
-        //NavMgr.NavigateTo(logUrl);
+                
     }
     protected override async Task OnInitializedAsync()
     {
+        /*
         var uri = NavMgr.ToAbsoluteUri(NavMgr.Uri);
         if (QueryHelpers.ParseQuery(uri.Query).TryGetValue("result", out var resultString))
         {
@@ -133,8 +171,8 @@
             if (!result)
             {
                 showError = true;
-                toastService.ShowWarning("username/password salah atau tidak terdaftar", "Perhatian");
+                
             }
-        }
+        }*/
     }
 }

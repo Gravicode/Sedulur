@@ -2,19 +2,16 @@ using Blazored.LocalStorage;
 using Blazored.Toast;
 using Sedulur.Tools;
 using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Components;
-using Microsoft.AspNetCore.Components.Web;
 using Sedulur.Data;
 using System.Text;
 using Microsoft.AspNetCore.HttpOverrides;
-using PdfSharp.Charting;
 using System.Net;
 using Microsoft.AspNetCore.Hosting.StaticWebAssets;
 using Sedulur.Models;
-using Microsoft.AspNetCore.DataProtection;
-using OneOf.Types;
-using Microsoft.Azure.Storage.Shared.Protocol;
-using Sedulur.Helpers;
+using Microsoft.AspNetCore.Authentication;
+using System.Security.Claims;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.VisualStudio.Web.CodeGenerators.Mvc.Controller;
 
 var builder = WebApplication.CreateBuilder(args);
 Encoding.RegisterProvider(CodePagesEncodingProvider.Instance);
@@ -32,6 +29,7 @@ builder.Services.Configure<CookiePolicyOptions>(options =>
 builder.Services.AddAuthentication(
     CookieAuthenticationDefaults.AuthenticationScheme)
     .AddCookie();
+
 // BLAZOR COOKIE Auth Code (end)
 // ******
 // ******
@@ -54,6 +52,7 @@ builder.Services.AddTransient<LogService>();
 builder.Services.AddTransient<ContactService>();
 
 builder.Services.AddTransient<UserProfileService>();
+builder.Services.AddTransient<SedulurDB>();
 
 builder.Services.AddCors(options =>
 {
@@ -160,6 +159,68 @@ app.UseCors(x => x
 .AllowAnyHeader()
 .SetIsOriginAllowed(origin => true) // allow any origin  
 .AllowCredentials());               // allow credentials 
+
+
+#region auth api
+
+/*
+app.MapGet("/login", async (string username,string password) =>
+{
+    //[FromBody]LoginModel person
+    LoginCls person = new LoginCls() { Username = username, Password = password };
+    var output = new OutputCls() { IsSucceed = false };
+    SedulurDB db = new();
+    bool isAuthenticate = false;
+    var usr = db.UserProfiles.Where(x => x.Username == person.Username).FirstOrDefault();
+    if (usr != null)
+    {
+        var enc = new Encryption();
+        var pass = enc.Decrypt(usr.Password);
+        isAuthenticate = pass == person.Password;
+    }
+    // In this example we just log the user in
+    // (Always log the user in for this demo)
+    if (isAuthenticate)
+    {
+        // *** !!! This is where you would validate the user !!! ***
+        // In this example we just log the user in
+        // (Always log the user in for this demo)
+        var claims = new List<Claim>
+            {
+                new Claim(ClaimTypes.Name, person.Username),
+                new Claim(ClaimTypes.Role, "Administrator"),
+            };
+        var claimsIdentity = new ClaimsIdentity(
+            claims, CookieAuthenticationDefaults.AuthenticationScheme);
+        var authProperties = new AuthenticationProperties
+        {
+            IsPersistent = true,
+            
+        };
+        
+        try
+        {
+            var res = Results.SignIn(
+            new ClaimsPrincipal(claimsIdentity),
+            authProperties, CookieAuthenticationDefaults.AuthenticationScheme);
+            output.IsSucceed = true;
+            output.Message = "success";
+            return Results.Ok(output);
+        }
+        catch (Exception ex)
+        {
+            string error = ex.Message;
+            Console.WriteLine(error);
+        }
+    }
+    //if (!isAuthenticate) returnUrl = "/index?result=false";
+    //return LocalRedirect(returnUrl);
+    //return Results.Unauthorized();
+    output.Message = "not authorized";
+    return Results.Ok(output);
+});
+*/
+#endregion
 
 // BLAZOR COOKIE Auth Code (begin)
 app.MapControllerRoute("default", "{controller=Home}/{action=Index}/{id?}");

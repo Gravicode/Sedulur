@@ -17,8 +17,11 @@ namespace Sedulur.Pages
         public async Task<IActionResult>
             OnGetAsync(string paramUsername, string paramPassword)
         {
-            if (db == null) db = new SedulurDB();
             string returnUrl = Url.Content("~/");
+            var isAuthenticate = true;
+            /*
+            if (db == null) db = new SedulurDB();
+            
             try
             {
                 // Clear the existing external cookie
@@ -37,6 +40,7 @@ namespace Sedulur.Pages
             }
             // In this example we just log the user in
             // (Always log the user in for this demo)
+            */
             if (isAuthenticate)
             {
                 // *** !!! This is where you would validate the user !!! ***
@@ -66,7 +70,7 @@ namespace Sedulur.Pages
                     string error = ex.Message;
                 }
             }
-            if (!isAuthenticate) returnUrl = "/index?result=false";
+            //if (!isAuthenticate) returnUrl = "/index?result=false";
             return LocalRedirect(returnUrl);
         }
     }
