@@ -53,7 +53,7 @@
                                         @{
                                             var like = LikeList[post.Id];
                                         }
-                                            <a href="#"  @onclick="(() => TogglePostLike(post, like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_on" : "thumb_up_off_alt")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
+                                            <a href="#" @onclick="(() => TogglePostLike(post, like))" class="text-muted text-decoration-none d-flex align-items-start fw-light"><span class="material-icons md-20 me-2">@(like ? "thumb_up_off_alt" : "thumb_up_on")</span><span>@(post.PostLikes == null ? 0 : post.PostLikes.Count())</span></a>
                                     </div>
                                 }
                                 else
