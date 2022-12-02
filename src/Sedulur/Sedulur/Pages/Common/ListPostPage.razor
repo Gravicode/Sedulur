@@ -223,10 +223,12 @@
                         {
                             if (x.PostLikes != null)
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
                             }
                             else
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, false);
                             }
                         });
@@ -244,10 +246,12 @@
                         {
                             if (x.PostLikes != null)
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
                             }
                             else
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, false);
                             }
                         });
@@ -265,10 +269,12 @@
                         {
                             if (x.PostLikes != null)
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
                             }
                             else
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, false);
                             }
                         });
@@ -289,10 +295,12 @@
                         {
                             if (x.PostLikes != null)
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, x.PostLikes.Any(c => c.LikedByUserId == selUser.Id));
                             }
                             else
                             {
+                                if (!LikeList.ContainsKey(x.Id))
                                 LikeList.Add(x.Id, false);
                             }
                         });

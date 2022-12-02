@@ -64,7 +64,7 @@ namespace Sedulur.Data
         }
         public List<Post> FindByKeyword(string Keyword)
         {
-            var keywords = Keyword.Split(' ');
+            var keywords = Keyword?.Split(' ');
             if (keywords.Length > 0)
             {
                 var data = from x in db.Posts.Include(c => c.PostComments).Include(c => c.PostLikes).Include(c => c.User).AsEnumerable()

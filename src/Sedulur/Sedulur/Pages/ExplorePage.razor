@@ -32,9 +32,10 @@
                                 <span class="text-primary">@post.Hashtags</span>
                             }
                         </div>
-                        @if (!string.IsNullOrEmpty(post.ImageUrls))
+                        @if (!string.IsNullOrEmpty(post.User.PicUrl))
                         {
-                            <img src="@(post.ImageUrls)" class="img-fluid rounded-4 ms-auto" alt="profle-img">
+                            @*<img src="@(post.ImageUrls)" height="80" class="img-fluid rounded-4 ms-auto" alt="profle-img">*@
+                            <img src="@(post.User.PicUrl)" height="80" class="rounded-4 ms-auto" alt="profle-img">
                         }
                         
                     </a>
