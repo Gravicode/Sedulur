@@ -7,6 +7,7 @@ namespace Sedulur.Data
 {
     public class AppConstants
     {
+        public static long MaxAllowedFileSize = 10 * 1024000;
         public static string UploadUrlPrefix = "https://storagemurahaje.blob.core.windows.net/sedulur";
         public const int FACE_WIDTH = 180;
         public const int FACE_HEIGHT = 135;
